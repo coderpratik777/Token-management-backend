@@ -1,10 +1,10 @@
-package com.pratiti.training.project;
+package com.pratiti.project;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BanktokensystemApplicationTests {
+class BankTokenManagementSystemApplicationTests {
 
 	@Test
 	void contextLoads() {

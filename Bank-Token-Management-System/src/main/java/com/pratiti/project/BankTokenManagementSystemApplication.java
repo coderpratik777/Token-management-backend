@@ -1,13 +1,13 @@
-package com.pratiti.training.project;
+package com.pratiti.project;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BanktokensystemApplication {
+public class BankTokenManagementSystemApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BanktokensystemApplication.class, args);
+		SpringApplication.run(BankTokenManagementSystemApplication.class, args);
 	}
 
 }
