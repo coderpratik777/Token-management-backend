@@ -22,6 +22,10 @@ public class Service  {
 	@OneToMany(mappedBy="service")
 	private List<Token> tokens;
 
+	//bi-directional one-to-one association to Counter
+	@OneToOne
+	private Counter counter;
+
 	public Service() {
 	}
 
@@ -83,6 +87,14 @@ public class Service  {
 		token.setService(null);
 
 		return token;
+	}
+
+	public Counter getCounter() {
+		return this.counter;
+	}
+
+	public void setCounter(Counter counter) {
+		this.counter = counter;
 	}
 
 }

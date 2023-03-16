@@ -13,8 +13,13 @@ public class Counter  {
 	private String name;
 
 	//bi-directional one-to-one association to CounterExecutive
-	@OneToOne(mappedBy="counter")
+	@OneToOne
+	@JoinColumn(name="id", referencedColumnName="counter_id")
 	private CounterExecutive counterExecutive;
+
+	//bi-directional one-to-one association to Service
+	@OneToOne(mappedBy="counter")
+	private Service service;
 
 	public Counter() {
 	}
@@ -41,6 +46,14 @@ public class Counter  {
 
 	public void setCounterExecutive(CounterExecutive counterExecutive) {
 		this.counterExecutive = counterExecutive;
+	}
+
+	public Service getService() {
+		return this.service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
 	}
 
 }

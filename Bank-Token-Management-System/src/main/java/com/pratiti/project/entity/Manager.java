@@ -2,7 +2,6 @@ package com.pratiti.project.entity;
 
 import javax.persistence.*;
 
-
 @Entity
 @NamedQuery(name="Manager.findAll", query="SELECT m FROM Manager m")
 public class Manager  {

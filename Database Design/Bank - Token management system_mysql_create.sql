@@ -17,12 +17,13 @@ CREATE TABLE `Token` (
 
 CREATE TABLE `Counter` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` varchar(50),
+	`name` VARCHAR(255),
 	PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `Service` (
 	`id` INT NOT NULL AUTO_INCREMENT,
+	`counter_id` INT NOT NULL,
 	`service_name` VARCHAR(255) NOT NULL,
 	PRIMARY KEY (`id`)
 );
@@ -36,23 +37,24 @@ CREATE TABLE `Manager` (
 
 CREATE TABLE `Counter_Executive` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`counter_number` INT NOT NULL,
 	`username` VARCHAR(255) NOT NULL,
+	`counter_id` INT NOT NULL,
 	`password` VARCHAR(255) NOT NULL UNIQUE,
 	PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `Servicetype` (
-	`id` INT NOT NULL AUTO_INCREMENT,
+	`id` INT NOT NULL,
 	`service_id` INT,
 	`service_name` varchar(50),
-	`type_of_service` VARCHAR(255) NOT NULL,
 	PRIMARY KEY (`id`)
 );
 
 ALTER TABLE `Token` ADD CONSTRAINT `Token_fk0` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`);
 
-ALTER TABLE `Counter_Executive` ADD CONSTRAINT `Counter_Executive_fk0` FOREIGN KEY (`counter_number`) REFERENCES `Counter`(`id`);
+ALTER TABLE `Service` ADD CONSTRAINT `Service_fk0` FOREIGN KEY (`counter_id`) REFERENCES `Counter`(`id`);
+
+ALTER TABLE `Counter_Executive` ADD CONSTRAINT `Counter_Executive_fk0` FOREIGN KEY (`counter_id`) REFERENCES `Counter`(`id`);
 
 ALTER TABLE `Servicetype` ADD CONSTRAINT `Servicetype_fk0` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`);
 
