@@ -2,7 +2,6 @@ package com.pratiti.project.entity;
 
 import javax.persistence.*;
 
-
 @Entity
 @NamedQuery(name="Customer.findAll", query="SELECT c FROM Customer c")
 public class Customer  {

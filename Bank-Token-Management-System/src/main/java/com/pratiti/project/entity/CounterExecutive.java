@@ -2,7 +2,6 @@ package com.pratiti.project.entity;
 
 import javax.persistence.*;
 
-
 @Entity
 @Table(name="counter_executive")
 @NamedQuery(name="CounterExecutive.findAll", query="SELECT c FROM CounterExecutive c")
@@ -16,8 +15,7 @@ public class CounterExecutive  {
 	private String username;
 
 	//bi-directional one-to-one association to Counter
-	@OneToOne
-	@JoinColumn(name="counter_number")
+	@OneToOne(mappedBy="counterExecutive")
 	private Counter counter;
 
 	public CounterExecutive() {

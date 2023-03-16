@@ -2,18 +2,16 @@ package com.pratiti.project.entity;
 
 import javax.persistence.*;
 
-
 @Entity
-@NamedQuery(name="Servicetype.findAll", query="SELECT s FROM Servicetype s")
-public class Servicetype  {
+@NamedQuery(name = "Servicetype.findAll", query = "SELECT s FROM Servicetype s")
+public class Servicetype {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name="service_name")
+	@Column(name = "service_name")
 	private String serviceName;
 
-	//bi-directional many-to-one association to Service
 	@ManyToOne
 	private Service subService;
 
@@ -36,6 +34,7 @@ public class Servicetype  {
 		this.serviceName = serviceName;
 	}
 
+
 	public Service getSubService() {
 		return subService;
 	}
@@ -44,5 +43,5 @@ public class Servicetype  {
 		this.subService = subService;
 	}
 
-	
+
 }

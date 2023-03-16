@@ -22,6 +22,10 @@ public class Service  {
 	@OneToOne(mappedBy="service")
 	private Token token;
 
+	//bi-directional one-to-one association to Counter
+	@OneToOne
+	private Counter counter;
+
 	public Service() {
 	}
 
@@ -57,5 +61,12 @@ public class Service  {
 		this.token = token;
 	}
 
-	
+
+	public Counter getCounter() {
+		return this.counter;
+	}
+
+	public void setCounter(Counter counter) {
+		this.counter = counter;
+	}
 }
