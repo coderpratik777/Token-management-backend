@@ -16,6 +16,7 @@ import com.pratiti.project.entity.Servicetype;
 import com.pratiti.project.entity.Token;
 import com.pratiti.project.entity.Token.Status;
 import com.pratiti.project.model.TokenData;
+import com.pratiti.project.queuemanager.TokenQueueManager;
 import com.pratiti.project.repository.ServiceRepository;
 import com.pratiti.project.repository.ServicetypeRepository;
 import com.pratiti.project.repository.TokenRepository;
@@ -23,7 +24,7 @@ import com.pratiti.project.repository.TokenRepository;
 @org.springframework.stereotype.Service
 public class TokenService {
 	
-	Queue<Token> counter1TokenQueue=new LinkedList<>();
+	TokenQueueManager tokenqueue=TokenQueueManager.getInstance();
 	
 	@Autowired
 	ServiceRepository serviceRepository;
@@ -53,7 +54,7 @@ public class TokenService {
 		//timeColonFormatter.format(colonTime);
 		token.setGenerationTime(Time.valueOf(colonTime));
 		token.setService(service);
-		counter1TokenQueue.add(token);
+		tokenqueue.enqueue(token, service.getCounter().getId());
 		tokenRepository.save(token);
 		
 		return token;

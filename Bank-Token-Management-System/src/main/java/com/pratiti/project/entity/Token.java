@@ -22,7 +22,7 @@ public class Token  {
 	private Time generationTime;
 
 	//bi-directional many-to-one association to Service
-	@OneToOne
+	@ManyToOne
 	@JsonIgnore
 	private Service service;
 	
@@ -82,6 +82,9 @@ public class Token  {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+	public String toString() {
+		return "token id"+this.id+" token status "+this.status;
 	}
 
 	

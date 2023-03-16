@@ -23,9 +23,9 @@ public class Service  {
 	private List<Servicetype> servicetypes;
 
 	//bi-directional many-to-one association to Token
-	@OneToOne(mappedBy="service")
+	@OneToMany(mappedBy="service")
 	@JsonIgnore
-	private Token token;
+	private List<Token> token;
 
 	//bi-directional one-to-one association to Counter
 	@OneToOne
@@ -59,15 +59,6 @@ public class Service  {
 		this.servicetypes = servicetypes;
 	}
 
-	public Token getToken() {
-		return token;
-	}
-
-	public void setToken(Token token) {
-		this.token = token;
-	}
-
-
 	public Counter getCounter() {
 		return this.counter;
 	}
@@ -75,4 +66,13 @@ public class Service  {
 	public void setCounter(Counter counter) {
 		this.counter = counter;
 	}
+
+	public List<Token> getToken() {
+		return token;
+	}
+
+	public void setToken(List<Token> token) {
+		this.token = token;
+	}
+	
 }
