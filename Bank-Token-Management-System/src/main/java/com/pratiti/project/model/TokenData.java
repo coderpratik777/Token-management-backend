@@ -2,13 +2,17 @@ package com.pratiti.project.model;
 
 import java.util.List;
 
-import com.pratiti.project.entity.Service;
-import com.pratiti.project.entity.Servicetype;
 
 public class TokenData {
 	
 	private int tokenId;
 	private int tokenStatus;
+	
+    private String service;
+	
+	private List<String> subServices;
+	
+	
 	
 	public int getTokenId() {
 		return tokenId;
@@ -42,11 +46,6 @@ public class TokenData {
 		this.subServices = subServices;
 	}
 
-	private String service;
-	
-	private List<String> subServices;
-	
-	
 	
 
 }

@@ -1,6 +1,9 @@
 package com.pratiti.project.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 
@@ -16,14 +19,17 @@ public class Service  {
 
 	//bi-directional many-to-one association to Servicetype
 	@OneToMany(mappedBy="subService")
+	@JsonIgnore
 	private List<Servicetype> servicetypes;
 
 	//bi-directional many-to-one association to Token
 	@OneToOne(mappedBy="service")
+	@JsonIgnore
 	private Token token;
 
 	//bi-directional one-to-one association to Counter
 	@OneToOne
+	@JsonIgnore
 	private Counter counter;
 
 	public Service() {

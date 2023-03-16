@@ -1,10 +1,12 @@
 package com.pratiti.project.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.sql.Time;
 
 @Entity
-@NamedQuery(name="Token.findAll", query="SELECT t FROM Token t")
 public class Token  {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -21,8 +23,10 @@ public class Token  {
 
 	//bi-directional many-to-one association to Service
 	@OneToOne
+	@JsonIgnore
 	private Service service;
 	
+	@Enumerated(EnumType.STRING)
 	private Status status;
 	
 	public static enum Status{

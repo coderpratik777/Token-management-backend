@@ -2,6 +2,8 @@ package com.pratiti.project.entity;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @NamedQuery(name = "Servicetype.findAll", query = "SELECT s FROM Servicetype s")
 public class Servicetype {
@@ -13,6 +15,7 @@ public class Servicetype {
 	private String serviceName;
 
 	@ManyToOne
+	@JsonIgnore
 	private Service subService;
 
 	public Servicetype() {

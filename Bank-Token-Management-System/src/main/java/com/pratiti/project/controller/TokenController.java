@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pratiti.project.entity.Token;
 import com.pratiti.project.model.TokenData;
-import com.pratiti.project.service.QueueService;
+import com.pratiti.project.service.TokenService;
 
 @RestController
-public class QueueController {
+public class TokenController {
 	
 	
 	@Autowired
-	QueueService queueService;
+	TokenService queueService;
 	
 	@PostMapping("/addtoken")
 	public Token addToken(@RequestBody TokenData tokenData) {
