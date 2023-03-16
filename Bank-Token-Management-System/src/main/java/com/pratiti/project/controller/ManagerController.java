@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.pratiti.project.entity.Counter;
 import com.pratiti.project.entity.Service;
 import com.pratiti.project.entity.Servicetype;
@@ -22,12 +21,12 @@ public class ManagerController {
 	
 	// Manager : Adding Counter
 	@PostMapping("/add/counter")
-	public String addCounter(@RequestBody Counter counter) {
+	public int addCounter(@RequestBody Counter counter) {
 		try {
-			managerService.addCounter(counter);
-			return "Counter Added Succesfully";
+			int id = managerService.addCounter(counter);
+			return id;
 		} catch (ManagerServiceException e) {
-			return (e.getMessage());
+			return 0;
 		}
 	}
 
