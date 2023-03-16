@@ -19,17 +19,21 @@ public class Token  {
 	@Column(name="generation_time")
 	private Time generationTime;
 
-	private String status;
-
 	//bi-directional many-to-one association to Service
-	@ManyToOne
+	@OneToOne
 	private Service service;
-
+	
+	private Status status;
+	
+	public static enum Status{
+		ACTIVE,DONE,PENDING;
+	}
+	
 	public Token() {
 	}
 
 	public int getId() {
-		return this.id;
+		return id;
 	}
 
 	public void setId(int id) {
@@ -37,7 +41,7 @@ public class Token  {
 	}
 
 	public Time getExpectedTime() {
-		return this.expectedTime;
+		return expectedTime;
 	}
 
 	public void setExpectedTime(Time expectedTime) {
@@ -45,7 +49,7 @@ public class Token  {
 	}
 
 	public int getFrequencyOfCalling() {
-		return this.frequencyOfCalling;
+		return frequencyOfCalling;
 	}
 
 	public void setFrequencyOfCalling(int frequencyOfCalling) {
@@ -53,27 +57,29 @@ public class Token  {
 	}
 
 	public Time getGenerationTime() {
-		return this.generationTime;
+		return generationTime;
 	}
 
 	public void setGenerationTime(Time generationTime) {
 		this.generationTime = generationTime;
 	}
 
-	public String getStatus() {
-		return this.status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public Service getService() {
-		return this.service;
+		return service;
 	}
 
 	public void setService(Service service) {
 		this.service = service;
 	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	
 
 }

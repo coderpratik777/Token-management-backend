@@ -15,18 +15,18 @@ public class Service  {
 	private String serviceName;
 
 	//bi-directional many-to-one association to Servicetype
-	@OneToMany(mappedBy="service")
+	@OneToMany(mappedBy="subService")
 	private List<Servicetype> servicetypes;
 
 	//bi-directional many-to-one association to Token
-	@OneToMany(mappedBy="service")
-	private List<Token> tokens;
+	@OneToOne(mappedBy="service")
+	private Token token;
 
 	public Service() {
 	}
 
 	public int getId() {
-		return this.id;
+		return id;
 	}
 
 	public void setId(int id) {
@@ -34,7 +34,7 @@ public class Service  {
 	}
 
 	public String getServiceName() {
-		return this.serviceName;
+		return serviceName;
 	}
 
 	public void setServiceName(String serviceName) {
@@ -42,47 +42,20 @@ public class Service  {
 	}
 
 	public List<Servicetype> getServicetypes() {
-		return this.servicetypes;
+		return servicetypes;
 	}
 
 	public void setServicetypes(List<Servicetype> servicetypes) {
 		this.servicetypes = servicetypes;
 	}
 
-	public Servicetype addServicetype(Servicetype servicetype) {
-		getServicetypes().add(servicetype);
-		servicetype.setService(this);
-
-		return servicetype;
-	}
-
-	public Servicetype removeServicetype(Servicetype servicetype) {
-		getServicetypes().remove(servicetype);
-		servicetype.setService(null);
-
-		return servicetype;
-	}
-
-	public List<Token> getTokens() {
-		return this.tokens;
-	}
-
-	public void setTokens(List<Token> tokens) {
-		this.tokens = tokens;
-	}
-
-	public Token addToken(Token token) {
-		getTokens().add(token);
-		token.setService(this);
-
+	public Token getToken() {
 		return token;
 	}
 
-	public Token removeToken(Token token) {
-		getTokens().remove(token);
-		token.setService(null);
-
-		return token;
+	public void setToken(Token token) {
+		this.token = token;
 	}
 
+	
 }

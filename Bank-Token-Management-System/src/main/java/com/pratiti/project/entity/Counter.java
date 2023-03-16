@@ -10,7 +10,7 @@ public class Counter  {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 
-	private String name;
+	private int counterNumber;
 
 	//bi-directional one-to-one association to CounterExecutive
 	@OneToOne(mappedBy="counter")
@@ -27,12 +27,12 @@ public class Counter  {
 		this.id = id;
 	}
 
-	public String getName() {
-		return this.name;
+	public int getName() {
+		return this.counterNumber;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(int number) {
+		this.counterNumber = number;
 	}
 
 	public CounterExecutive getCounterExecutive() {

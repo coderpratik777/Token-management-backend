@@ -13,12 +13,9 @@ public class Servicetype  {
 	@Column(name="service_name")
 	private String serviceName;
 
-	@Column(name="type_of_service")
-	private String typeOfService;
-
 	//bi-directional many-to-one association to Service
 	@ManyToOne
-	private Service service;
+	private Service subService;
 
 	public Servicetype() {
 	}
@@ -39,20 +36,13 @@ public class Servicetype  {
 		this.serviceName = serviceName;
 	}
 
-	public String getTypeOfService() {
-		return this.typeOfService;
+	public Service getSubService() {
+		return subService;
 	}
 
-	public void setTypeOfService(String typeOfService) {
-		this.typeOfService = typeOfService;
+	public void setSubService(Service subService) {
+		this.subService = subService;
 	}
 
-	public Service getService() {
-		return this.service;
-	}
-
-	public void setService(Service service) {
-		this.service = service;
-	}
-
+	
 }
