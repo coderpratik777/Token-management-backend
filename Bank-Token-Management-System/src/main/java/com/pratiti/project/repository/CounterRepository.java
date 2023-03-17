@@ -7,6 +7,6 @@ import com.pratiti.project.entity.Counter;
 
 public interface CounterRepository extends JpaRepository<Counter, Integer>{
 
-	@Query("select c from Counter c where upper(c.name) like upper(?1)")
+	@Query("select c from Counter c where upper(c.counterName) like upper(?1)")
 	Optional<Counter> findByName(String name);
 }

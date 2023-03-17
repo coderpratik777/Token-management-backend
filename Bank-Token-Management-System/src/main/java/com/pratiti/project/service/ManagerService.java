@@ -37,7 +37,7 @@ public class ManagerService {
 	
 	// Manager : Assigning Counter To Service
 	public int addService(Service service) {
-		Optional<Service>service1 = serviceRepository.findByCounterId(service.getCounter().getId());
+		Optional<Service> service1 = serviceRepository.findByCounterId(service.getCounter().getId());
 		if (!service1.isPresent()) {
 			serviceRepository.save(service);
 			return service.getId();
