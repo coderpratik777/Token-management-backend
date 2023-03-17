@@ -26,7 +26,7 @@ public class CounterController {
 	private CounterService counterService;
 	
 	
-	@GetMapping("/gettokencounter")
+	@GetMapping("/gettokencounters")
 	public Queue<Token> getToken(@RequestParam int cid){
 		Queue<Token> tokens=counterService.gettoken(cid);
 		return tokens;

@@ -43,7 +43,7 @@ public class CounterService {
 		if(token!=null)
 		{
 			token.setStatus(Status.ACTIVE);
-		]
+		}
 		tokenqueue.dequeue(cid);
 		return token;
 
