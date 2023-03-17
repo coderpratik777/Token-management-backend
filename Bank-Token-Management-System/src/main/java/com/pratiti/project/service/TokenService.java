@@ -35,7 +35,7 @@ public class TokenService {
 	@Autowired
 	TokenRepository tokenRepository;
 	
-	public Token addToken(TokenData tokenData) {
+	public Token addToken(TokenData tokenData,int i) {
 		
 		Optional<Service> svc=serviceRepository.findByServiceName(tokenData.getService());
 		Service service=svc.get();
@@ -46,6 +46,7 @@ public class TokenService {
 		}
 		service.setServicetypes(typeOfServices);
 		Token token=new Token();
+		
 		token.setFrequencyOfCalling(0);
 		token.setStatus(Status.PENDING);
 		//String timeColonPattern = "hh:mm:ss a";
@@ -54,6 +55,7 @@ public class TokenService {
 		//timeColonFormatter.format(colonTime);
 		token.setGenerationTime(Time.valueOf(colonTime));
 		token.setService(service);
+		token.setServicetypeId(servicetypeRepository.findByServiceName(tokenData.getSubServices().get(i)).get().getId());
 		tokenqueue.enqueue(token, service.getCounter().getId());
 		tokenRepository.save(token);
 		

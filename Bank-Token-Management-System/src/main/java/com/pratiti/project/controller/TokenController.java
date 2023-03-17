@@ -1,5 +1,7 @@
 package com.pratiti.project.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -23,8 +25,14 @@ public class TokenController {
 	
 	
 	@PostMapping("/addtoken")
-	public Token addToken(@RequestBody TokenData tokenData) {
-		return queueService.addToken(tokenData);
+	public List<Token> addToken(@RequestBody TokenData tokenData) {
+		List<Token> tokenList= new ArrayList<>();
+		int i =0;
+		for(String s:tokenData.getSubServices()) {
+			tokenList.add(queueService.addToken(tokenData,i));
+			i++;
+		}
+		return tokenList;
 	}
 	
 	//this is for testing purpose to get the locally save queues in the console 

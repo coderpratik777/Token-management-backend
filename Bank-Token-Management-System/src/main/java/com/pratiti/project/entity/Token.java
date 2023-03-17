@@ -5,6 +5,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.sql.Time;
+import java.util.List;
 
 @Entity
 public class Token  {
@@ -26,6 +27,17 @@ public class Token  {
 	@JsonIgnore
 	private Service service;
 	
+	private int servicetypeId;
+	
+	
+	
+	public int getServicetypeId() {
+		return servicetypeId;
+	}
+
+	public void setServicetypeId(int servicetypeId) {
+		this.servicetypeId = servicetypeId;
+	}
 	@Enumerated(EnumType.STRING)
 	private Status status;
 	
@@ -84,7 +96,11 @@ public class Token  {
 		this.status = status;
 	}
 	public String toString() {
-		return "token id"+this.id+" token status "+this.status;
+		List<Servicetype> temp = this.service.getServicetypes();
+		for(Servicetype s:temp) {
+			System.out.println(s.getServiceName());
+		}
+		return "token id"+this.id+" token status "+this.status+"token subservices"+this.service.getServiceName();
 	}
 
 	
