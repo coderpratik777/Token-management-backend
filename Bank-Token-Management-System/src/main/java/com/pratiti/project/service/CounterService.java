@@ -131,7 +131,7 @@ public class CounterService {
 
 	public Servicetype getsubservicename(int sid) {
 		
-		Optional<Servicetype> sert=servicetypeRepository.findByServiceId(sid);
+		Optional<Servicetype> sert=servicetypeRepository.findByParentServiceId(sid);
 		
 		Servicetype servicetype=sert.get();
 		return servicetype;

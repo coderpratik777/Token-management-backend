@@ -29,7 +29,6 @@ public class Token  {
 	private int servicetypeId;
 	
 	
-	
 	public int getServicetypeId() {
 		return servicetypeId;
 	}
