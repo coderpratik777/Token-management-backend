@@ -29,7 +29,6 @@ public class Service  {
 
 	//bi-directional one-to-one association to Counter
 	@OneToOne
-	@JsonIgnore
 	private Counter counter;
 
 	public Service() {

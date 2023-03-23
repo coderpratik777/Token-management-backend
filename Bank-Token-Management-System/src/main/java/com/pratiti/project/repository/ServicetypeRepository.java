@@ -27,4 +27,7 @@ public interface ServicetypeRepository extends JpaRepository<Servicetype, Intege
 	@Query("select s from Servicetype s where upper(s.serviceName) like upper(?1)")
 	Optional<Servicetype> findByServiceName(String serviceName);
 
+	Optional<Servicetype> findByServiceId(int sid);
+
+	
 }

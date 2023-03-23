@@ -33,7 +33,7 @@ public class TokenQueueManager {
     }
 
     public synchronized Token dequeue(int counter) {
-        Queue<Token> counterQueue = counterQueues.get(counter);
+    	 Queue<Token> counterQueue = counterQueues.get(counter);
         if (counterQueue == null || counterQueue.isEmpty()) {
             return null;
         }

@@ -2,6 +2,10 @@ package com.pratiti.project.entity;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+
 
 @Entity
 @NamedQuery(name="Counter.findAll", query="SELECT c FROM Counter c")
@@ -12,13 +16,15 @@ public class Counter  {
 
 	private String counterName;
 
-	//bi-directional one-to-one association to CounterExecutive
-	@OneToOne
-	@JoinColumn(name="id", referencedColumnName="counter_id")
-	private CounterExecutive counterExecutive;
 
+
+	@OneToOne(mappedBy="counter",cascade = CascadeType.ALL)
+	@JsonIgnore
+	private CounterExecutive counterExecutive;
+	
 	//bi-directional one-to-one association to Service
 	@OneToOne(mappedBy="counter")
+	@JsonIgnore
 	private Service service;
 
 	public Counter() {
