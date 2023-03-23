@@ -6,9 +6,11 @@ import java.util.Map;
 import java.util.Queue;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pratiti.project.entity.Token;
@@ -17,12 +19,11 @@ import com.pratiti.project.queuemanager.TokenQueueManager;
 import com.pratiti.project.service.TokenService;
 
 @RestController
+@CrossOrigin
 public class TokenController {
-	
 	
 	@Autowired
 	TokenService queueService;
-	
 	
 	@PostMapping("/addtoken")
 	public List<Token> addToken(@RequestBody TokenData tokenData) {
@@ -37,7 +38,7 @@ public class TokenController {
 	
 	//this is for testing purpose to get the locally save queues in the console 
 	@GetMapping("/gettoken")
-	public String gettoken() {
+	public Map<Integer,Queue<Token>> gettoken() {
 		TokenQueueManager token=TokenQueueManager.getInstance();
 		Map<Integer,Queue<Token>> map=token.getMap();
 		for(Map.Entry<Integer, Queue<Token>> x:map.entrySet()) {
@@ -47,7 +48,7 @@ public class TokenController {
 				System.out.println(y);
 			}
 		}
-		return "token return";
+		return map;
 	}
 
 }

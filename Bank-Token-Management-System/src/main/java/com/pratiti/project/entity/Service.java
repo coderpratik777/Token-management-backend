@@ -18,7 +18,7 @@ public class Service  {
 	private String serviceName;
 
 	//bi-directional many-to-one association to Servicetype
-	@OneToMany(mappedBy="subService")
+	@OneToMany(mappedBy="parentService")
 	@JsonIgnore
 	private List<Servicetype> servicetypes;
 
