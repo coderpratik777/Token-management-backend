@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pratiti.project.exceptions.CounterServiceException;
-import com.pratiti.project.model.LoginData;					
+import com.pratiti.project.model.LoginData;
+import com.pratiti.project.model.StatusData;
 import com.pratiti.project.service.CounterExecutiveService;
 
 @RestController
@@ -18,12 +19,15 @@ public class CounterExecutiveController {
 	private CounterExecutiveService  counterExecutiveService;
 	
 	@PostMapping("/executivelogin")
-	public void Login(@RequestBody LoginData loginData) {
+	public StatusData Login(@RequestBody LoginData loginData) {
+		StatusData status=counterExecutiveService.login(loginData);
 		try {
-			counterExecutiveService.login(loginData);
+			
+			return status;
 		} catch (CounterServiceException e) {
 			System.out.println(e.getMessage());
 		}
+		return status;
 		
 	}
 	

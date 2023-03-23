@@ -9,4 +9,6 @@ public interface CounterRepository extends JpaRepository<Counter, Integer>{
 
 	@Query("select c from Counter c where upper(c.counterName) like upper(?1)")
 	Optional<Counter> findByName(String name);
+	
+	
 }

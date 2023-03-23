@@ -15,7 +15,8 @@ public class CounterExecutive  {
 	private String username;
 
 	//bi-directional one-to-one association to Counter
-	@OneToOne(mappedBy="counterExecutive")
+	@OneToOne()
+	@JoinColumn(name="counter_id")
 	private Counter counter;
 
 	public CounterExecutive() {

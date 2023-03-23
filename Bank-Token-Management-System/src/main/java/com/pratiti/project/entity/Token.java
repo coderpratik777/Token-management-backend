@@ -24,7 +24,6 @@ public class Token  {
 
 	//bi-directional many-to-one association to Service
 	@ManyToOne
-	@JsonIgnore
 	private Service service;
 	
 	private int servicetypeId;

@@ -16,7 +16,9 @@ public class Servicetype {
 
 	@ManyToOne
 	@JsonIgnore
-	private Service subService;
+	private Service service;
+
+
 
 	public Servicetype() {
 	}
@@ -37,14 +39,6 @@ public class Servicetype {
 		this.serviceName = serviceName;
 	}
 
-
-	public Service getSubService() {
-		return subService;
-	}
-
-	public void setSubService(Service subService) {
-		this.subService = subService;
-	}
 
 
 }

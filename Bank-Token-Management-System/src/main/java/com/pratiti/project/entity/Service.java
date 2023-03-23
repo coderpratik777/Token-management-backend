@@ -18,7 +18,7 @@ public class Service  {
 	private String serviceName;
 
 	//bi-directional many-to-one association to Servicetype
-	@OneToMany(mappedBy="subService")
+	@OneToMany(mappedBy="service")
 	@JsonIgnore
 	private List<Servicetype> servicetypes;
 
@@ -29,7 +29,6 @@ public class Service  {
 
 	//bi-directional one-to-one association to Counter
 	@OneToOne
-	@JsonIgnore
 	private Counter counter;
 
 	public Service() {

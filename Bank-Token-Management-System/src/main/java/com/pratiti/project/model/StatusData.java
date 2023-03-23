@@ -1,13 +1,24 @@
 package com.pratiti.project.model;
 
+import com.pratiti.project.entity.Token.Status;
+
 public class StatusData {
-	private int tid;
+	private int cid;
 	private String st;
-	public int getTid() {
-		return tid;
+	private int tokenId;
+	
+	
+	public int getTokenId() {
+		return tokenId;
 	}
-	public void setTid(int tid) {
-		this.tid = tid;
+	public void setTokenId(int tokenId) {
+		this.tokenId = tokenId;
+	}
+	public int getCid() {
+		return cid;
+	}
+	public void setCid(int cid) {
+		this.cid = cid;
 	}
 	public String getSt() {
 		return st;

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pratiti.project.entity.Counter;
+import com.pratiti.project.entity.Service;
+import com.pratiti.project.entity.Servicetype;
 import com.pratiti.project.entity.Token;
 import com.pratiti.project.model.StatusData;
 import com.pratiti.project.service.CounterService;
@@ -40,9 +43,35 @@ public class CounterController {
 	}
 	
 	@PostMapping("/changestatus")
-	public void changeStatus(@RequestBody StatusData statusdata){
-		System.out.println("get change status called");
-		 counterService.changestatus(statusdata.getTid(),statusdata.getSt());
+	public String changeStatus(@RequestBody StatusData statusdata){
+//		System.out.println("get change status called");
+		 counterService.changestatus(statusdata.getCid(),statusdata.getSt(),statusdata.getTokenId());
+	
+	return "done";
 	}
+	
+	@GetMapping("/get-counter")
+	public List<Counter> GetCounter()
+	{
+		 return counterService.getcounter();
+		
+		
+	}
+	
+	@GetMapping("/get-service")
+	public Service Getservicename(@RequestParam int sid)
+	{
+		return counterService.getservicename(sid);
+		
+	}
+	@GetMapping("/get-sub-service")
+	public Servicetype Getsubservicename(@RequestParam int sid)
+	{
+		return counterService.getsubservicename(sid);
+		
+	}
+	
+	
+	
 			
 }
