@@ -83,6 +83,8 @@ public class CounterService {
 		else if(st.equals("pending"))
 		{
 			token.setStatus(Status.PENDING);
+			tokenqueue.enqueue(token, cid,"pending");
+			tokenqueue.dequeue(cid);
 		}
 //		Map<Integer, Queue<Token>> map = tokenqueue.getMap();
 //		for (Map.Entry<Integer, Queue<Token>> x : map.entrySet()) {
