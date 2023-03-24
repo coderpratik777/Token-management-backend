@@ -17,18 +17,19 @@ public class Service  {
 	@Column(name="service_name")
 	private String serviceName;
 
-	//bi-directional many-to-one association to Servicetype
+	//bidirectional many-to-one association to Servicetype
 	@OneToMany(mappedBy="parentService")
 	@JsonIgnore
 	private List<Servicetype> servicetypes;
 
-	//bi-directional many-to-one association to Token
+	//bidirectional many-to-one association to Token
 	@OneToMany(mappedBy="service")
 	@JsonIgnore
 	private List<Token> token;
 
-	//bi-directional one-to-one association to Counter
-	@OneToOne
+	//bidirectional one-to-one association to Counter
+	@OneToOne (cascade = CascadeType.ALL)
+	@JsonIgnore
 	private Counter counter;
 
 	public Service() {

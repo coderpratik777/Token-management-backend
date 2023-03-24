@@ -1,7 +1,6 @@
 package com.pratiti.project.entity;
 
 import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -19,12 +18,10 @@ public class Counter  {
 
 
 	@OneToOne(mappedBy="counter",cascade = CascadeType.ALL)
-	@JsonIgnore
 	private CounterExecutive counterExecutive;
 	
-	//bi-directional one-to-one association to Service
-	@OneToOne(mappedBy="counter")
-	@JsonIgnore
+	//bidirectional one-to-one association to Service
+	@OneToOne(mappedBy="counter", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private Service service;
 
 	public Counter() {
