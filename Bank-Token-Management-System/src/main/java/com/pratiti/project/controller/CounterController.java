@@ -15,6 +15,8 @@ import com.pratiti.project.entity.Counter;
 import com.pratiti.project.entity.Service;
 import com.pratiti.project.entity.Servicetype;
 import com.pratiti.project.entity.Token;
+import com.pratiti.project.exceptions.TokenServiceException;
+import com.pratiti.project.model.Status;
 import com.pratiti.project.model.StatusData;
 import com.pratiti.project.service.CounterService;
 
@@ -43,11 +45,18 @@ public class CounterController {
 	}
 	
 	@PostMapping("/changestatus")
-	public String changeStatus(@RequestBody StatusData statusdata){
-//		System.out.println("get change status called");
-		 counterService.changestatus(statusdata.getCid(),statusdata.getSt(),statusdata.getTokenId());
-	
-	return "done";
+	public Status changeStatus(@RequestBody StatusData statusdata){
+		Status status=new Status();
+		try {
+			counterService.changestatus(statusdata.getCid(),statusdata.getSt());
+			status.setMesssageIfAny("Successfully change status!");
+			status.setStatus(true);
+			}
+		catch(TokenServiceException e) {
+			status.setMesssageIfAny(e.getMessage());
+			status.setStatus(false);
+		}
+		return status;
 	}
 	
 	@GetMapping("/get-counter")

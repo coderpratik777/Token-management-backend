@@ -1,6 +1,8 @@
 package com.pratiti.project.controller;
 
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -10,10 +12,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pratiti.project.entity.Token;
+import com.pratiti.project.entity.Token.Status;
 import com.pratiti.project.model.TokenData;
 import com.pratiti.project.queuemanager.TokenQueueManager;
 import com.pratiti.project.service.TokenService;
@@ -41,9 +45,9 @@ public class TokenController {
 	
 	//this is for testing purpose to get the locally save queues in the console 
 	@GetMapping("/gettoken")
-	public Map<Integer,Queue<Token>> gettoken() {
-		Map<Integer,Queue<Token>> map=token.getMap();
-		for(Map.Entry<Integer, Queue<Token>> x:map.entrySet()) {
+	public Map<Integer,Deque<Token>> gettoken() {
+		Map<Integer,Deque<Token>> map=token.getMap();
+		for(Map.Entry<Integer,Deque<Token>> x:map.entrySet()) {
 			System.out.println(x.getKey());
 			Queue<Token> q=x.getValue();
 			for(Token y:q) {
@@ -53,18 +57,36 @@ public class TokenController {
 		return map;
 	}
 	
-	@GetMapping("/getpendingtoken")
-	public Map<Integer,Queue<Token>> getPendingToken() {
-		Map<Integer,Queue<Token>> pendingMap=token.getPendingMap();
+	@GetMapping("/getpendingqueue")
+	public Queue<Token> getPendingToken(@RequestParam("counterid") int counterId) {
+		Map<Integer,Deque<Token>> pendingMap=token.getPendingMap();
+		Queue<Token> q=new LinkedList<>();
 		System.out.println("printing the pending map");
-		for(Map.Entry<Integer, Queue<Token>> x:pendingMap.entrySet()) {
+		for(Map.Entry<Integer, Deque<Token>> x:pendingMap.entrySet()) {
 			System.out.println(x.getKey());
-			Queue<Token> q=x.getValue();
-			for(Token y:q) {
-				System.out.println(y);
+			if(x.getKey()==counterId) {
+				 q=x.getValue();
+				for(Token y:q) {
+					System.out.println(y);
+				}
 			}
 		}
-		return pendingMap;
+		return q;
+	}
+	
+	@GetMapping("/gettopservicepq")
+	public Token getTopservicePendingQueue(@RequestParam("counterid") int counterId) {
+		Token pendingToken=token.dequeue(counterId,"pendingqueue");
+		pendingToken.setStatus(Status.ACTIVE);
+		token.addFirst(counterId, pendingToken);
+		return pendingToken;
+	
+	}
+	
+	@GetMapping("/copy-pendingqueue-to-counterqueue")
+	public String copyAction(@RequestParam("counterid")int counterId) {
+		queueService.copyAction(counterId);
+		return "done copying";
 	}
 
 }

@@ -1,14 +1,24 @@
 package com.pratiti.project.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.pratiti.project.model.ServiceAndTypes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import com.pratiti.project.entity.Counter;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import com.pratiti.project.entity.CounterExecutive;
+import com.pratiti.project.entity.Manager;
 import com.pratiti.project.entity.Service;
-import com.pratiti.project.entity.Servicetype;
+import com.pratiti.project.exceptions.CounterServiceException;
 import com.pratiti.project.exceptions.ManagerServiceException;
+import com.pratiti.project.model.CounterData;
+import com.pratiti.project.model.CounterExecutivesData;
+import com.pratiti.project.model.LoginData;
+import com.pratiti.project.model.LoginStatus;
+import com.pratiti.project.model.ServicesData;
+import com.pratiti.project.model.Status;
+import com.pratiti.project.model.StatusData;
 import com.pratiti.project.service.ManagerService;
 
 @RestController
@@ -18,40 +28,90 @@ public class ManagerController {
 	@Autowired
 	private ManagerService managerService;
 
-	
-	// Manager : Adding Counter
+
+	// Manager : Adding Counter and assigning service and counter executive to it
 	@PostMapping("/add/counter")
-	public int addCounter(@RequestBody Counter counter) {
+	public String addCounter(@RequestBody CounterData counterData) {
 		try {
-			int id = managerService.addCounter(counter);
-			return id;
+			String res = managerService.addCounter(counterData);
+			return res;
 		} catch (ManagerServiceException e) {
-			return 0;
+			return e.getMessage();
 		}
 	}
 
-	
+
+	@GetMapping("/get/services")
+	public List<ServicesData> getService() {
+		List<Service> services = managerService.getServices();
+		List<ServicesData> servicesData = new ArrayList<>();
+		for (Service service : services) {
+			ServicesData serviceData = new ServicesData();
+			serviceData.setId(service.getId());
+			serviceData.setServiceName(service.getServiceName());
+			servicesData.add(serviceData);
+		}
+		return servicesData;
+	}
+
+
+	@GetMapping("/get/counter/executive")
+	public List<CounterExecutivesData> getCounterExecutive() {
+		List<CounterExecutive> counterExecutives = managerService.getCounterExecutive();
+		List<CounterExecutivesData> CounterExecutivesData = new ArrayList<>();
+		for (CounterExecutive counterExecutive : counterExecutives) {
+			CounterExecutivesData counterExecutiveData = new CounterExecutivesData();
+			counterExecutiveData.setId(counterExecutive.getId());
+			counterExecutiveData.setUsername(counterExecutive.getUsername());
+			CounterExecutivesData.add(counterExecutiveData);
+		}
+		return CounterExecutivesData;
+	}
+
+
+
 	// Manager : Adding Service
 	@PostMapping("/add/service")
-	public int addService(@RequestBody Service service) {
+	public String addServiceAndItsType(@RequestBody ServiceAndTypes serviceAndTypes) {
 		try {
-			int id = managerService.addService(service);
-			return id;
+			String res = managerService.addServiceAndItsType(serviceAndTypes);
+			return res;
 		} catch (ManagerServiceException e) {
-			return 0;
+			return e.getMessage();
 		}
 	}
-
 	
-	// Manager : Adding Type Of Service
-	@PostMapping("/add/service/type")
-	public String addServiceType(@RequestBody Servicetype serviceType) {
+	
+	@PostMapping("/adminlogin")
+	public LoginStatus adminLogin(@RequestBody LoginData loginData) {
+		LoginStatus status=new LoginStatus();
 		try {
-			managerService.addServiceType(serviceType);
-			return "Service Type Added Successfully!";
-
-		} catch (ManagerServiceException e) {
-			return (e.getMessage());
+			Manager manager=managerService.login(loginData);
+			status.setId(manager.getId());
+			status.setMesssageIfAny("Login successfull!");
+			status.setStatus(true);
+			
+		} 
+		catch (CounterServiceException e) {
+			status.setMesssageIfAny(e.getMessage());
+			status.setStatus(false);
 		}
+		return status;
 	}
+	
+	@PostMapping("/addcounterexecutive")
+	public Status addCounterExecutive(@RequestBody CounterExecutive counterExecutive) {
+		Status status=new Status();
+		try {
+			managerService.addCounterExecutive(counterExecutive);
+			status.setMesssageIfAny("Successfully added the Counter Executive !");
+			status.setStatus(true);
+		}
+		catch(ManagerServiceException e) {
+			status.setMesssageIfAny(e.getMessage());
+			status.setStatus(false);
+		}
+		return status;
+	}
+
 }

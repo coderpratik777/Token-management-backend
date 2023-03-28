@@ -1,5 +1,6 @@
 package com.pratiti.project.service;
 
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import com.pratiti.project.entity.Service;
 import com.pratiti.project.entity.Servicetype;
 import com.pratiti.project.entity.Token;
 import com.pratiti.project.entity.Token.Status;
+import com.pratiti.project.exceptions.TokenServiceException;
 import com.pratiti.project.queuemanager.TokenQueueManager;
 import com.pratiti.project.repository.CounterRepository;
 import com.pratiti.project.repository.ServiceRepository;
@@ -25,7 +27,7 @@ public class CounterService {
 	private TokenRepository tokenrepository;
 
 	@Autowired
-	private ServiceRepository  serviceRepository;
+	private ServiceRepository  serviceRepository;                                          
 	
 	@Autowired
 	private CounterRepository counterRepository;
@@ -45,8 +47,8 @@ public class CounterService {
    
    Queue<Token> q = null;
 
-		Map<Integer, Queue<Token>> map = tokenqueue.getMap();
-		for (Map.Entry<Integer, Queue<Token>> x : map.entrySet()) {
+		Map<Integer, Deque<Token>> map = tokenqueue.getMap();
+		for (Map.Entry<Integer, Deque<Token>> x : map.entrySet()) {
 			System.out.println(x.getKey());
 			if (x.getKey() == sid) {
 
@@ -68,55 +70,29 @@ public class CounterService {
 
 	}
 
-	public void changestatus(int cid,String st,int tokenId) {
+	public void changestatus(int cid,String st) {
 
 		Queue<Token> q = new LinkedList<>();
 		Token token=new Token();
 		token=tokenqueue.top(cid);
-		if(st.equals("done"))
-		{
-			
-			token.setStatus(Status.DONE);
+		if(st.equals("done")){
+			token.setStatus(Status.SERVICED);
 			tokenqueue.dequeue(cid);
+			tokenrepository.save(token);
 			System.out.println("done");
 		}
-		else if(st.equals("pending"))
-		{
-			token.setStatus(Status.PENDING);
-			tokenqueue.enqueue(token, cid,"pending");
+		else if(st.equals("noshow")) {
+			if(token.getFrequencyOfCalling()>=3) {
+				token.setStatus(Status.ABANDONED);
+				tokenrepository.save(token);
+				tokenqueue.dequeue(cid);
+				throw new TokenServiceException("excess of token call so it is abandoned");
+			}
+			token.setStatus(Status.NOSHOW);
+			token.setFrequencyOfCalling(token.getFrequencyOfCalling()+1); 
+			tokenqueue.enqueue(token, cid,st);
 			tokenqueue.dequeue(cid);
 		}
-//		Map<Integer, Queue<Token>> map = tokenqueue.getMap();
-//		for (Map.Entry<Integer, Queue<Token>> x : map.entrySet()) {
-////			System.out.println(x.getKey());
-//			if(x.getKey()==cid) {
-//				 q = x.getValue();
-//				
-//				 System.out.println(x.getKey());
-//			}	
-//		}
-		
-		
-//		for (Token token : q) {
-//			System.out.println(tokenId);
-//			if(token.getId()==tokenId) {
-//				System.out.println(token.getId());
-//				if(st.equals("pending"))
-//				{
-//					token.setStatus(Status.PENDING);
-//					System.out.println("pending");
-//					
-//				}
-//				if(st.equals("done")) {
-//					token.setStatus(Status.DONE);
-//					tokenrepository.save(token);
-//					tokenqueue.dequeue(cid);
-//					
-//					}
-//				
-//			}
-//		}
-
 	}
 
 	public List<Counter> getcounter() {
@@ -141,5 +117,6 @@ public class CounterService {
     
 	
 	
-
+ 
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 

@@ -15,7 +15,7 @@ public class CounterExecutive  {
 	private String username;
 
 	//bi-directional one-to-one association to Counter
-	@OneToOne()
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="counter_id")
 	private Counter counter;
 
