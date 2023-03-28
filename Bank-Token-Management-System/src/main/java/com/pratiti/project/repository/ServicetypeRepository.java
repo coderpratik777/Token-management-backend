@@ -17,6 +17,7 @@
 
 package com.pratiti.project.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,7 +28,7 @@ public interface ServicetypeRepository extends JpaRepository<Servicetype, Intege
 	@Query("select s from Servicetype s where upper(s.serviceName) like upper(?1)")
 	Optional<Servicetype> findByServiceName(String serviceName);
 
-	Optional<Servicetype> findByParentServiceId(int sid);
+	List<Servicetype> findByParentServiceId(int sid);
 
 	
 }

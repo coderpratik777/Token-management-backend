@@ -18,10 +18,12 @@ public class Counter  {
 
 
 	@OneToOne(mappedBy="counter",cascade = CascadeType.ALL)
+	@JsonIgnore
 	private CounterExecutive counterExecutive;
 	
 	//bidirectional one-to-one association to Service
 	@OneToOne(mappedBy="counter", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JsonIgnore
 	private Service service;
 
 	public Counter() {

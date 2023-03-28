@@ -24,7 +24,6 @@ import com.pratiti.project.service.CounterService;
 public class CounterController {
 	
 	
-	
 	@Autowired
 	private CounterService counterService;
 	
@@ -51,27 +50,29 @@ public class CounterController {
 	}
 	
 	@GetMapping("/get-counter")
-	public List<Counter> GetCounter()
+	public List<Counter> GetCounters()
 	{
 		 return counterService.getcounter();
-		
-		
 	}
 	
-	@GetMapping("/get-service")
-	public Service Getservicename(@RequestParam int sid)
+	@GetMapping("/get-services")
+	public List<Service> Getservices()
 	{
-		return counterService.getservicename(sid);
+		return counterService.getservices();
 		
 	}
 	@GetMapping("/get-sub-service")
-	public Servicetype Getsubservicename(@RequestParam int sid)
+	public List<Servicetype> Getsubservices(@RequestParam int sid)
 	{
 		return counterService.getsubservicename(sid);
 		
 	}
 	
-	
-	
+	@GetMapping("/get-all-sub-service")
+	public List<Servicetype> Getallsubservices()
+	{
+		return counterService.getallsubservicename();
+		
+	}
 			
 }

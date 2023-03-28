@@ -25,25 +25,23 @@ public class CounterService {
 	private TokenRepository tokenrepository;
 
 	@Autowired
-	private ServiceRepository  serviceRepository;
-	
+	private ServiceRepository serviceRepository;
+
 	@Autowired
 	private CounterRepository counterRepository;
-	
+
 	@Autowired
 	private ServicetypeRepository servicetypeRepository;
-	
+
 	TokenQueueManager tokenqueue = TokenQueueManager.getInstance();
 
-	
-	
 	public Queue<Token> gettoken(int cid) {
-		
-		Optional<Service>ser=serviceRepository.findByCounterId(cid);
-   Service service=ser.get();
-   int sid=service.getId();
-   
-   Queue<Token> q = null;
+
+		Optional<Service> ser = serviceRepository.findByCounterId(cid);
+		Service service = ser.get();
+		int sid = service.getId();
+
+		Queue<Token> q = null;
 
 		Map<Integer, Queue<Token>> map = tokenqueue.getMap();
 		for (Map.Entry<Integer, Queue<Token>> x : map.entrySet()) {
@@ -58,9 +56,8 @@ public class CounterService {
 	}
 
 	public Token gettopservice(int cid) {
-		Token token= tokenqueue.top(cid);
-		if(token!=null)
-		{
+		Token token = tokenqueue.top(cid);
+		if (token != null) {
 			token.setStatus(Status.ACTIVE);
 		}
 //		tokenqueue.dequeue(cid);
@@ -68,21 +65,20 @@ public class CounterService {
 
 	}
 
-	public void changestatus(int cid,String st,int tokenId) {
+	public void changestatus(int cid, String st, int tokenId) {
 
 		Queue<Token> q = new LinkedList<>();
-		Token token=new Token();
-		token=tokenqueue.top(cid);
-		if(st.equals("done"))
-		{
-			
+		Token token = new Token();
+		token = tokenqueue.top(cid);
+		if (st.equals("done")) {
+
 			token.setStatus(Status.DONE);
 			tokenqueue.dequeue(cid);
+			tokenrepository.save(token);
 			System.out.println("done");
-		}
-		else if(st.equals("pending"))
-		{
+		} else if (st.equals("pending")) {
 			token.setStatus(Status.PENDING);
+			tokenrepository.save(token);
 		}
 //		Map<Integer, Queue<Token>> map = tokenqueue.getMap();
 //		for (Map.Entry<Integer, Queue<Token>> x : map.entrySet()) {
@@ -93,8 +89,7 @@ public class CounterService {
 //				 System.out.println(x.getKey());
 //			}	
 //		}
-		
-		
+
 //		for (Token token : q) {
 //			System.out.println(tokenId);
 //			if(token.getId()==tokenId) {
@@ -118,26 +113,19 @@ public class CounterService {
 	}
 
 	public List<Counter> getcounter() {
-		
-		 return counterRepository.findAll();
-		
-	}
-	
-	public Service getservicename(int sid) {
-		Optional<Service> ser= serviceRepository.findById(sid);
-		Service service=ser.get();
-		return service;
+		return counterRepository.findAll();
 	}
 
-	public Servicetype getsubservicename(int sid) {
-		
-		Optional<Servicetype> sert=servicetypeRepository.findByParentServiceId(sid);
-		
-		Servicetype servicetype=sert.get();
-		return servicetype;
+	public List<Service> getservices() {
+		return serviceRepository.findAll();
 	}
-    
+
+	public List<Servicetype> getsubservicename(int sid) {
+		return servicetypeRepository.findByParentServiceId(sid);
+	}
 	
-	
+	public List<Servicetype> getallsubservicename() {
+		return servicetypeRepository.findAll();
+	}
 
 }
