@@ -24,7 +24,7 @@ import com.pratiti.project.entity.Servicetype;
 
 public interface ServicetypeRepository extends JpaRepository<Servicetype, Integer>{
 
-	@Query("select s from Servicetype s where upper(s.serviceName) like upper(?1)")
+	@Query("select s from Servicetype s where s.serviceName = ?1")
 	Optional<Servicetype> findByServiceName(String serviceName);
 
 	Optional<Servicetype> findByParentServiceId(int sid);
