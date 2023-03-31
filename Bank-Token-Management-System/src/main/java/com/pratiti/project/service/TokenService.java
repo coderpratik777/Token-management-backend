@@ -4,8 +4,10 @@ import java.sql.Time;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 
@@ -60,5 +62,16 @@ public class TokenService {
 		tokenRepository.save(token);
 		
 		return token;
+	}
+
+	public void copyAction(int counterId) {
+		Map<Integer,Deque<Token>> pendingMap=tokenqueue.getPendingMap();
+		Deque<Token> queue=pendingMap.get(counterId);
+		int length=queue.size();
+		for(int i=0;i<length;i++) {
+			Token pendingToken=tokenqueue.dequeue(counterId,"pendingqueue");
+			pendingToken.setStatus(Status.PENDING);
+			tokenqueue.enqueue(pendingToken,counterId);
+		}
 	}
 }

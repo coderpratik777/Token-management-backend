@@ -40,7 +40,7 @@ public class Token  {
 	private Status status;
 	
 	public static enum Status{
-		ACTIVE,DONE,PENDING;
+		ACTIVE,SERVICED,PENDING,NOSHOW,ABANDONED;
 	}
 	
 	public Token() {

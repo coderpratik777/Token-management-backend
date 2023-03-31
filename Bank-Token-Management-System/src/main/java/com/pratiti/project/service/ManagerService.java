@@ -5,15 +5,21 @@ import java.util.List;
 import java.util.Optional;
 
 import com.pratiti.project.model.ServiceAndTypes;
+import com.pratiti.project.model.StatusData;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pratiti.project.entity.Counter;
 import com.pratiti.project.entity.CounterExecutive;
+import com.pratiti.project.entity.Manager;
 import com.pratiti.project.entity.Service;
 import com.pratiti.project.entity.Servicetype;
+import com.pratiti.project.exceptions.CounterServiceException;
 import com.pratiti.project.exceptions.ManagerServiceException;
 import com.pratiti.project.model.CounterData;
+import com.pratiti.project.model.LoginData;
 import com.pratiti.project.repository.CounterExecutiveRepository;
 import com.pratiti.project.repository.CounterRepository;
+import com.pratiti.project.repository.ManagerRepository;
 import com.pratiti.project.repository.ServiceRepository;
 import com.pratiti.project.repository.ServicetypeRepository;
 
@@ -31,6 +37,9 @@ public class ManagerService {
 
 	@Autowired
 	private CounterExecutiveRepository counterExecutiveRepository;
+	
+	@Autowired
+	private ManagerRepository managerRepository;
 
 
 	// Manager : Adding Counter and assigning service
@@ -88,6 +97,36 @@ public class ManagerService {
 		} else {
 			throw new ManagerServiceException("The bank is already providing this service");
 		}
+	}
+	
+	//admin login
+	public Manager login(LoginData data) {
+		if (managerRepository.existsByName(data.getUsername())) {
+			Optional<Manager> manager=managerRepository.findByName(data.getUsername());
+			Manager managerData=manager.get();
+			if (managerData.getPassword().equals(data.getPassword())) {
+				System.out.println("login successfully");
+				return managerData;
+			} 
+			else {
+				throw new CounterServiceException("Enter Correct Password");
+			}
+
+		} 
+		else {
+			throw new CounterServiceException("Enter Correct Username");
+		}
+	}
+	
+	//Manager : Adding the Counter Executive
+	public void addCounterExecutive(CounterExecutive data) {
+		 CounterExecutive counterExecutive=counterExecutiveRepository.findByUsername(data.getUsername());
+		 if(counterExecutive==null) {
+			 counterExecutiveRepository.save(data);
+		 }
+		 else {
+			 throw new ManagerServiceException("Counter executive already exists !");
+		 }
 	}
 
 }
