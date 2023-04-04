@@ -39,12 +39,7 @@ public class CounterService {
 
 	public Queue<Token> gettoken(int cid) {
 
-//		Optional<Service> ser = serviceRepository.findByCounterId(cid);
-//		Service service = ser.get();
-//		int sid = service.getId();
-
 		Queue<Token> q = null;
-
 		Map<Integer, Deque<Token>> map = tokenqueue.getMap();
 		for (Map.Entry<Integer, Deque<Token>> x : map.entrySet()) {
 			System.out.println(x.getKey());
@@ -52,7 +47,6 @@ public class CounterService {
 				q = x.getValue();
 			}
 		}
-
 		return q;
 	}
 
@@ -63,29 +57,84 @@ public class CounterService {
 		}
 		return token;
 	}
-
-	public void changestatus(int cid, String st) {
-		Queue<Token> q = new LinkedList<>();
-		Token token = new Token();
-		token = tokenqueue.top(cid);
-		if (st.equals("done")) {
-			token.setStatus(Status.SERVICED);
-			tokenqueue.dequeue(cid);
-			tokenrepository.save(token);
-			System.out.println("done");
-		} else if (st.equals("noshow")) {
-			if (token.getFrequencyOfCalling() >= 3) {
-				token.setStatus(Status.ABANDONED);
+	
+	public boolean makeTokenActive(int tokenId) {
+		Map<Integer, Deque<Token>> map = tokenqueue.getMap();
+		int cId = tokenrepository.findById(tokenId).get().getService().getCounter().getId();
+		for (Map.Entry<Integer, Deque<Token>> x : map.entrySet()) {
+			Queue<Token> q=x.getValue();
+			if(x.getKey()==cId) {
+				Token token = tokenrepository.findById(tokenId).get();
+				if(token.getStatus() == Status.NOSHOW) {
+					token.setStatus(Status.ACTIVE);
+					token.setFrequencyOfCalling(token.getFrequencyOfCalling()+1);
+					tokenrepository.save(token);
+					tokenqueue.dequeue(cId, "pendingqueue");
+					return true;
+				}else if(token.getStatus()==Status.ACTIVE) {
+					return false;
+				}else if(token.getStatus()==Status.ABANDONED) {
+					return false;
+				}
+				token.setStatus(Status.ACTIVE);
+				token.setFrequencyOfCalling(token.getFrequencyOfCalling()+1);
 				tokenrepository.save(token);
-				tokenqueue.dequeue(cid);
-				throw new TokenServiceException("excess of token call so it is abandoned");
+				tokenqueue.dequeue(cId);
 			}
-			token.setStatus(Status.NOSHOW);
-			token.setFrequencyOfCalling(token.getFrequencyOfCalling() + 1);
-			tokenqueue.enqueue(token, cid, st);
-			tokenqueue.dequeue(cid);
 		}
+		return true;
 	}
+	
+	public boolean addTokenToPending(int tokenId,int... counterid) {
+		Token token = tokenrepository.findById(tokenId).get();
+		int cId = tokenrepository.findById(tokenId).get().getService().getCounter().getId();
+		if(token.getStatus()!=Status.ACTIVE) {
+			return false;
+		}
+		if(token.getFrequencyOfCalling()>=3) {			
+			token.setStatus(Status.ABANDONED);
+			tokenrepository.save(token);
+			return false;
+		}
+		token.setStatus(Status.NOSHOW);
+		tokenrepository.save(token);
+		tokenqueue.enqueue(token, cId, "noshow");
+		return true;
+	}
+	
+	public boolean serveToken(int tokenId) {
+		Token token = tokenrepository.findById(tokenId).get();
+		int cId = tokenrepository.findById(tokenId).get().getService().getCounter().getId();
+		if(token.getStatus()==Status.ACTIVE) {
+			token.setStatus(Status.SERVICED);
+			tokenrepository.save(token);
+			return true;
+		}
+		return false;
+	}
+
+//	public void changestatus(int cid, String st) {
+//		Queue<Token> q = new LinkedList<>();
+//		Token token = new Token();
+//		token = tokenqueue.top(cid);
+//		if (st.equals("done")) {
+//			token.setStatus(Status.SERVICED);
+//			tokenqueue.dequeue(cid);
+//			tokenrepository.save(token);
+//			System.out.println("done");
+//		} else if (st.equals("noshow")) {
+//			if (token.getFrequencyOfCalling() >= 3) {
+//				token.setStatus(Status.ABANDONED);
+//				tokenrepository.save(token);
+//				tokenqueue.dequeue(cid);
+//				throw new TokenServiceException("excess of token call so it is abandoned");
+//			}
+//			token.setStatus(Status.NOSHOW);
+//			token.setFrequencyOfCalling(token.getFrequencyOfCalling() + 1);
+//			tokenqueue.enqueue(token, cid, st);
+//			tokenqueue.dequeue(cid);
+//		}
+//	}
 
 	public List<Counter> getcounter() {
 		return counterRepository.findAll();

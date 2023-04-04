@@ -38,25 +38,41 @@ public class CounterController {
 	
 	@GetMapping("/gettopservice")
 	public Token getTopService(@RequestParam int cid) {
-		System.out.println("get top service called");
+//		System.out.println("get top service called");
 		Token token=counterService.gettopservice(cid);
 		return token;	
 	}
 	
-	@PostMapping("/changestatus")
-	public Status changeStatus(@RequestBody StatusData statusdata){
-		Status status=new Status();
-		try {
-			counterService.changestatus(statusdata.getCid(),statusdata.getSt());
-			status.setMesssageIfAny("Successfully change status!");
-			status.setStatus(true);
-			}
-		catch(TokenServiceException e) {
-			status.setMesssageIfAny(e.getMessage());
-			status.setStatus(false);
-		}
-		return status;
+	@GetMapping("/make-token-active")
+	public boolean makeTokenActive(@RequestParam int tokenId) {
+		return counterService.makeTokenActive(tokenId);
+		
 	}
+	
+	@GetMapping("/addtoken-to-pending")
+	public boolean addTokenToPending(@RequestParam int tokenId) {
+		return counterService.addTokenToPending(tokenId);
+	}
+	
+	@GetMapping("serve-token")
+	public boolean serveToken(@RequestParam int tokenId) {
+		return counterService.serveToken(tokenId);
+	}
+	
+//	@PostMapping("/changestatus")
+//	public Status changeStatus(@RequestBody StatusData statusdata){
+//		Status status=new Status();
+//		try {
+//			counterService.changestatus(statusdata.getCid(),statusdata.getSt());
+//			status.setMesssageIfAny("Successfully change status!");
+//			status.setStatus(true);
+//			}
+//		catch(TokenServiceException e) {
+//			status.setMesssageIfAny(e.getMessage());
+//			status.setStatus(false);
+//		}
+//		return status;
+//	}
 	
 	@GetMapping("/get-counter")
 	public List<Counter> GetCounters()

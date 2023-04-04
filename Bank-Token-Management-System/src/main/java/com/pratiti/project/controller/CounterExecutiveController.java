@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pratiti.project.exceptions.CounterServiceException;
+import com.pratiti.project.model.CounterExecutiveLoginStatus;
 import com.pratiti.project.model.LoginData;
 import com.pratiti.project.model.StatusData;
 import com.pratiti.project.service.CounterExecutiveService;
@@ -19,13 +20,13 @@ public class CounterExecutiveController {
 	private CounterExecutiveService  counterExecutiveService;
 	
 	@PostMapping("/executivelogin")
-	public StatusData Login(@RequestBody LoginData loginData) {
-		StatusData status=counterExecutiveService.login(loginData);
+	public CounterExecutiveLoginStatus Login(@RequestBody LoginData loginData) {
+		CounterExecutiveLoginStatus status = new CounterExecutiveLoginStatus();
 		try {
-			
-			return status;
+			status=counterExecutiveService.login(loginData);
 		} catch (CounterServiceException e) {
-			System.out.println(e.getMessage());
+			status.setStatus(false);
+			status.setMesssageIfAny("Incorrect credentials");
 		}
 		return status;
 		

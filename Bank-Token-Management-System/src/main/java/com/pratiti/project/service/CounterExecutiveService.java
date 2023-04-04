@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.pratiti.project.entity.CounterExecutive;
 import com.pratiti.project.exceptions.CounterServiceException;
+import com.pratiti.project.model.CounterExecutiveLoginStatus;
 import com.pratiti.project.model.LoginData;
 import com.pratiti.project.model.StatusData;
 import com.pratiti.project.repository.CounterExecutiveRepository;
@@ -18,14 +19,13 @@ public class CounterExecutiveService {
 	@Autowired
 	private CounterExecutiveRepository counterExecutiveRepository;
 
-	public StatusData login(LoginData logindata) {
-		StatusData status = new StatusData();
+	public CounterExecutiveLoginStatus login(LoginData logindata) {
+		CounterExecutiveLoginStatus status = new CounterExecutiveLoginStatus();
 		CounterExecutive usern = counterExecutiveRepository.findByUsername(logindata.getUsername());
 		if (counterExecutiveRepository.existsByUsername(logindata.getUsername())) {
 
 			if (usern.getPassword().equals(logindata.getPassword())) {
-				System.out.println("login successfully");
-				status.setSt("login");
+				status.setStatus(true);
 				status.setCid(usern.getCounter().getId());
 				return status;
 			} else {

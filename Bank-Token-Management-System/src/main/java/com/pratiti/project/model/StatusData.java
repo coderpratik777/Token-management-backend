@@ -7,7 +7,6 @@ public class StatusData {
 	private String st;
 	private int tokenId;
 	
-	
 	public int getTokenId() {
 		return tokenId;
 	}

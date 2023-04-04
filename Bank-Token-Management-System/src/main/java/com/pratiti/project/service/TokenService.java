@@ -37,6 +37,9 @@ public class TokenService {
 	@Autowired
 	TokenRepository tokenRepository;
 	
+	@Autowired
+	CounterService counterService;
+	
 	public Token addToken(TokenData tokenData,int i) {
 		
 		Optional<Service> svc=serviceRepository.findByServiceName(tokenData.getService());
@@ -61,17 +64,34 @@ public class TokenService {
 		tokenqueue.enqueue(token, service.getCounter().getId());
 		tokenRepository.save(token);
 		
+		Queue<Token> tok= counterService.gettoken(service.getCounter().getId());
+		LocalTime expectedTime=colonTime.plusMinutes((tok.size())*5);
+		token.setExpectedTime(Time.valueOf(expectedTime));
+		tokenRepository.save(token);
+		
 		return token;
+	}
+	
+	public Token getTokenInfo(int id) {
+		return tokenRepository.findById(id).get();
 	}
 
 	public void copyAction(int counterId) {
 		Map<Integer,Deque<Token>> pendingMap=tokenqueue.getPendingMap();
-		Deque<Token> queue=pendingMap.get(counterId);
-		int length=queue.size();
+		Deque<Token> pendingQueue=pendingMap.get(counterId);
+		
+//		Map<Integer,Deque<Token>> counterMap = tokenqueue.getMap();
+//		Deque<Token> counterQueue=counterMap.get(counterId);
+//		for(int i=0;i<counterQueue.size();i++) {
+//			tokenqueue.dequeue(counterId);
+//		}
+		int length = pendingQueue.size();
 		for(int i=0;i<length;i++) {
 			Token pendingToken=tokenqueue.dequeue(counterId,"pendingqueue");
 			pendingToken.setStatus(Status.PENDING);
+			tokenRepository.save(pendingToken);
 			tokenqueue.enqueue(pendingToken,counterId);
+			System.out.println(i);
 		}
 	}
 }
