@@ -128,5 +128,24 @@ public class ManagerService {
 			 throw new ManagerServiceException("Counter executive already exists !");
 		 }
 	}
+	
+	
+	// Manager : Adding CatchAllCounter and assigning counter Executive
+	public Counter addCatchAllCounter(CounterData counterData) {
+		Optional<Counter> counter1 = counterRepository.findByName(counterData.getCounterName());
+		CounterExecutive counterExecutive = counterExecutiveRepository.fetchByUsername(counterData.getCounterExecutiveName());
+		if (!counter1.isPresent() && counterData.getCounterName() != null) {
+			Counter counter = new Counter();
+			counter.setName(counterData.getCounterName());
+			// Assigning counter executive to counter
+			counterExecutive.setCounter(counter);
+
+			counterRepository.save(counter);
+			return counter;
+		} else {
+			throw new ManagerServiceException("Counter Is already Available");
+		}
+	}
+
 
 }

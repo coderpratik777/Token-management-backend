@@ -58,18 +58,22 @@ public class CounterService {
 		return token;
 	}
 	
-	public boolean makeTokenActive(int tokenId) {
+	public boolean makeTokenActive(int tokenId,int cId) {
 		Map<Integer, Deque<Token>> map = tokenqueue.getMap();
-		int cId = tokenrepository.findById(tokenId).get().getService().getCounter().getId();
+		Deque<Token> queue=map.get(cId);
+		int requiredCounterId=cId;
+		if(queue==null) {
+			requiredCounterId=tokenrepository.findById(tokenId).get().getService().getCounter().getId();
+		}
 		for (Map.Entry<Integer, Deque<Token>> x : map.entrySet()) {
 			Queue<Token> q=x.getValue();
-			if(x.getKey()==cId) {
+			if(x.getKey()==requiredCounterId) {
 				Token token = tokenrepository.findById(tokenId).get();
 				if(token.getStatus() == Status.NOSHOW) {
 					token.setStatus(Status.ACTIVE);
 					token.setFrequencyOfCalling(token.getFrequencyOfCalling()+1);
 					tokenrepository.save(token);
-					tokenqueue.dequeue(cId, "pendingqueue");
+					tokenqueue.dequeue(requiredCounterId, "pendingqueue");
 					return true;
 				}else if(token.getStatus()==Status.ACTIVE) {
 					return false;
@@ -79,15 +83,15 @@ public class CounterService {
 				token.setStatus(Status.ACTIVE);
 				token.setFrequencyOfCalling(token.getFrequencyOfCalling()+1);
 				tokenrepository.save(token);
-				tokenqueue.dequeue(cId);
+				tokenqueue.dequeue(requiredCounterId);
 			}
 		}
 		return true;
 	}
 	
-	public boolean addTokenToPending(int tokenId,int... counterid) {
+	public boolean addTokenToPending(int tokenId,int cId) {
 		Token token = tokenrepository.findById(tokenId).get();
-		int cId = tokenrepository.findById(tokenId).get().getService().getCounter().getId();
+//		int cId = tokenrepository.findById(tokenId).get().getService().getCounter().getId();
 		if(token.getStatus()!=Status.ACTIVE) {
 			return false;
 		}
@@ -138,6 +142,15 @@ public class CounterService {
 
 	public List<Counter> getcounter() {
 		return counterRepository.findAll();
+	}
+	
+	public Counter getCounter(int counterId) {
+		Optional<Counter> counterData=counterRepository.findById(counterId);
+		if(counterData.isPresent()) {
+			return counterData.get();
+		}else {
+			throw new RuntimeException("Counter not found!");
+		}
 	}
 
 	public List<Service> getservices() {

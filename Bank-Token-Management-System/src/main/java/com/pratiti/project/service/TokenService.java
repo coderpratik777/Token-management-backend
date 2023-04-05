@@ -64,8 +64,8 @@ public class TokenService {
 		tokenqueue.enqueue(token, service.getCounter().getId());
 		tokenRepository.save(token);
 		
-		Queue<Token> tok= counterService.gettoken(service.getCounter().getId());
-		LocalTime expectedTime=colonTime.plusMinutes((tok.size())*5);
+		Queue<Token> counterQueue= counterService.gettoken(service.getCounter().getId());
+		LocalTime expectedTime=colonTime.plusMinutes((counterQueue.size())*5);
 		token.setExpectedTime(Time.valueOf(expectedTime));
 		tokenRepository.save(token);
 		

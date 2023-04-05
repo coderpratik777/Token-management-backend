@@ -44,14 +44,14 @@ public class CounterController {
 	}
 	
 	@GetMapping("/make-token-active")
-	public boolean makeTokenActive(@RequestParam int tokenId) {
-		return counterService.makeTokenActive(tokenId);
+	public boolean makeTokenActive(@RequestParam int tokenId,@RequestParam int cId) {
+		return counterService.makeTokenActive(tokenId,cId);
 		
 	}
 	
 	@GetMapping("/addtoken-to-pending")
-	public boolean addTokenToPending(@RequestParam int tokenId) {
-		return counterService.addTokenToPending(tokenId);
+	public boolean addTokenToPending(@RequestParam int tokenId,@RequestParam int cId) {
+		return counterService.addTokenToPending(tokenId,cId);
 	}
 	
 	@GetMapping("serve-token")
@@ -75,28 +75,39 @@ public class CounterController {
 //	}
 	
 	@GetMapping("/get-counter")
-	public List<Counter> GetCounters()
+	public List<Counter> getCounters()
 	{
 		 return counterService.getcounter();
 	}
 	
 	@GetMapping("/get-services")
-	public List<Service> Getservices()
+	public List<Service> getServices()
 	{
 		return counterService.getservices();
 		
 	}
 	@GetMapping("/get-sub-service")
-	public List<Servicetype> Getsubservices(@RequestParam int sid)
+	public List<Servicetype> getSubServices(@RequestParam int sid)
 	{
 		return counterService.getsubservicename(sid);
 		
 	}
 	
 	@GetMapping("/get-all-sub-service")
-	public List<Servicetype> Getallsubservices()
+	public List<Servicetype> getAllSubservices()
 	{
 		return counterService.getallsubservicename();
+		
+	}
+	
+	@GetMapping("/get-counter-name")
+	public String getCounterName(@RequestParam("counterid") int counterId) {
+		try {
+			Counter counter=counterService.getCounter(counterId);
+			return counter.getName();
+		}catch(RuntimeException e) {
+			return e.getMessage();
+		}
 		
 	}
 			

@@ -7,6 +7,8 @@ import com.pratiti.project.model.ServiceAndTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import com.pratiti.project.entity.Counter;
 import com.pratiti.project.entity.CounterExecutive;
 import com.pratiti.project.entity.Manager;
 import com.pratiti.project.entity.Service;
@@ -114,4 +116,18 @@ public class ManagerController {
 		return status;
 	}
 
+	// Manager : Adding Catch all Counter 
+		@PostMapping("/add/catchallcounter")
+		public Status addCatchAllCounter(@RequestBody CounterData counterData) {
+			Status status=new Status();
+			try {
+				Counter counter = managerService.addCatchAllCounter(counterData);
+				status.setMesssageIfAny("Successfully added the the Catchall counter!");
+				status.setStatus(true);
+			} catch (ManagerServiceException e) {
+				status.setMesssageIfAny(e.getMessage());
+				status.setStatus(false);
+			}
+			return status;
+		}
 }
