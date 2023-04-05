@@ -62,7 +62,7 @@ public class CounterService {
 		Map<Integer, Deque<Token>> map = tokenqueue.getMap();
 		Deque<Token> queue=map.get(cId);
 		int requiredCounterId=cId;
-		if(queue==null) {
+		if(queue==null || queue.size()==0) {
 			requiredCounterId=tokenrepository.findById(tokenId).get().getService().getCounter().getId();
 		}
 		for (Map.Entry<Integer, Deque<Token>> x : map.entrySet()) {
@@ -73,7 +73,7 @@ public class CounterService {
 					token.setStatus(Status.ACTIVE);
 					token.setFrequencyOfCalling(token.getFrequencyOfCalling()+1);
 					tokenrepository.save(token);
-					tokenqueue.dequeue(requiredCounterId, "pendingqueue");
+					tokenqueue.dequeue(cId, "pendingqueue");
 					return true;
 				}else if(token.getStatus()==Status.ACTIVE) {
 					return false;
