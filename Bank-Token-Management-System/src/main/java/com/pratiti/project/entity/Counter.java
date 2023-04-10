@@ -1,10 +1,6 @@
 package com.pratiti.project.entity;
 
 import javax.persistence.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
-
 
 @Entity
 @NamedQuery(name="Counter.findAll", query="SELECT c FROM Counter c")
@@ -14,17 +10,17 @@ public class Counter  {
 	private int id;
 
 	private String counterName;
-
-
-
-	@OneToOne(mappedBy="counter",cascade = CascadeType.ALL)
-	@JsonIgnore
-	private CounterExecutive counterExecutive;
 	
-	//bidirectional one-to-one association to Service
-	@OneToOne(mappedBy="counter", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-	@JsonIgnore
-	private Service service;
+	private int isActive;
+	private int isWorking;
+	
+	public String getCounterName() {
+		return counterName;
+	}
+
+	public void setCounterName(String counterName) {
+		this.counterName = counterName;
+	}
 
 	public Counter() {
 	}
@@ -37,28 +33,21 @@ public class Counter  {
 		this.id = id;
 	}
 
-	public String getName() {
-		return this.counterName;
+	public int getIsActive() {
+		return isActive;
 	}
 
-	public void setName(String counterName) {
-		this.counterName = counterName;
+	public void setIsActive(int isActive) {
+		this.isActive = isActive;
 	}
 
-	public CounterExecutive getCounterExecutive() {
-		return this.counterExecutive;
+	public int getIsWorking() {
+		return isWorking;
 	}
 
-	public void setCounterExecutive(CounterExecutive counterExecutive) {
-		this.counterExecutive = counterExecutive;
+	public void setIsWorking(int isWorking) {
+		this.isWorking = isWorking;
 	}
 
-	public Service getService() {
-		return this.service;
-	}
-
-	public void setService(Service service) {
-		this.service = service;
-	}
 
 }

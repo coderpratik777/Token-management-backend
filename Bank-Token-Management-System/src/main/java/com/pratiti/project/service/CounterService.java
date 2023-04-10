@@ -1,5 +1,8 @@
 package com.pratiti.project.service;
 
+import java.sql.Time;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,159 +13,210 @@ import java.util.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pratiti.project.entity.Counter;
+import com.pratiti.project.entity.GlobalQueue;
 import com.pratiti.project.entity.Service;
 import com.pratiti.project.entity.Servicetype;
 import com.pratiti.project.entity.Token;
+import com.pratiti.project.entity.GlobalQueue.TempStatus;
+import com.pratiti.project.entity.PendingQueue;
 import com.pratiti.project.entity.Token.Status;
-import com.pratiti.project.exceptions.TokenServiceException;
+import com.pratiti.project.exceptions.CounterServiceException;
 import com.pratiti.project.queuemanager.TokenQueueManager;
 import com.pratiti.project.repository.CounterRepository;
+import com.pratiti.project.repository.GlobalQueueRepository;
+import com.pratiti.project.repository.PendingQueueRepository;
 import com.pratiti.project.repository.ServiceRepository;
 import com.pratiti.project.repository.ServicetypeRepository;
 import com.pratiti.project.repository.TokenRepository;
 
 @org.springframework.stereotype.Service
 public class CounterService {
-	@Autowired
-	private TokenRepository tokenrepository;
+
+	private int count = 0;
 
 	@Autowired
-	private ServiceRepository serviceRepository;
+	private TokenRepository tokenRepository;
+	
+	@Autowired
+	CounterRepository counterRepository;
 
 	@Autowired
-	private CounterRepository counterRepository;
+	GlobalQueueRepository globalQueueRepository;
 
 	@Autowired
-	private ServicetypeRepository servicetypeRepository;
+	PendingQueueRepository pendingQueueRepository;
 
-	TokenQueueManager tokenqueue = TokenQueueManager.getInstance();
+//	TokenQueueManager tokenqueue = TokenQueueManager.getInstance();
 
-	public Queue<Token> gettoken(int cid) {
+	public GlobalQueue callNext(int counterId) throws CounterServiceException {
+		GlobalQueue globalToken;
+		
+		if(counterRepository.findById(counterId).get().getIsActive()==0) {
+			throw new CounterServiceException("Counter Not Active");
+		}
+		
+		if(counterRepository.findById(counterId).get().getIsWorking()!=0) {
+			throw new CounterServiceException("Please serve the called token first");
+		}
+		
 
-		Queue<Token> q = null;
-		Map<Integer, Deque<Token>> map = tokenqueue.getMap();
-		for (Map.Entry<Integer, Deque<Token>> x : map.entrySet()) {
-			System.out.println(x.getKey());
-			if (x.getKey() == cid) {
-				q = x.getValue();
+		if (globalQueueRepository.findAllPending().size() == 0) {
+			if (pendingQueueRepository.findAll().size() == 0) {
+				throw new CounterServiceException("No tokens available");
+			} else {
+				globalToken = globalQueueRepository.findById(pendingQueueRepository.findFirst()).get();
+				pendingQueueRepository.deleteById(globalToken.getTokenId());
+				count = 0;
+			}
+		} else {
+			if (count == 3 && pendingQueueRepository.findAll().size() > 0) {
+				globalToken = globalQueueRepository.findById(pendingQueueRepository.findFirst()).get();
+				pendingQueueRepository.deleteById(globalToken.getTokenId());
+				count = 0;
+			} else {
+				globalToken = globalQueueRepository.findFirst();
 			}
 		}
-		return q;
+		LocalTime currTime = LocalTime.now();
+		globalToken.setCalledAtTime(currTime);
+		globalToken.setFrequencyOfCalling(globalToken.getFrequencyOfCalling() + 1);
+		globalToken.setStatus(TempStatus.ACTIVE);
+		globalQueueRepository.save(globalToken);
+		
+		Counter counter = counterRepository.findById(counterId).get();
+		counter.setIsWorking(globalToken.getTokenId());
+		counterRepository.save(counter);
+		
+		count++;
+		return globalToken;
 	}
 
-	public Token gettopservice(int cid) {
-		Token token = tokenqueue.top(cid);
-		if (token != null) {
-			token.setStatus(Status.ACTIVE);
+	public Token serveToken(int counterId) throws CounterServiceException {
+		
+		if(counterRepository.findById(counterId).isEmpty()) {
+			throw new CounterServiceException("Counter Not Found");
 		}
+		
+		Counter counter = counterRepository.findById(counterId).get();
+		
+		if(counter.getIsActive()==0) {
+			throw new CounterServiceException("Counter Not Active");
+		}
+		
+		if(counter.getIsWorking()==0) {
+			throw new CounterServiceException("Please call any token first");
+		}
+		
+		if(globalQueueRepository.findById(counter.getIsWorking()).isEmpty()) {
+			throw new CounterServiceException("Token not found.");
+		}
+		
+		GlobalQueue globalToken = globalQueueRepository.findById(counter.getIsWorking()).get();
+		
+		if(globalToken.getStatus() != TempStatus.ACTIVE) {
+			throw new CounterServiceException("Token not active.");
+		}
+
+		Token token = new Token();
+		token.setId(globalToken.getTokenId());
+		token.setGenerationTime(globalToken.getGenerationTime());
+		token.setStatus(Status.SERVICED);
+		token.setServicetypeId(globalToken.getServicetypeId());
+		token.setTimesCalled(globalToken.getFrequencyOfCalling());
+		token.setCalledAtTime(globalToken.getCalledAtTime());
+		token.setServedBy(counter.getIsActive());
+		token.setServedAt(counterId);
+
+		LocalTime currTime = LocalTime.now();
+
+		token.setServeTime((int) Duration.between(globalToken.getCalledAtTime(), currTime).toMinutes());
+		tokenRepository.save(token);
+		globalQueueRepository.delete(globalToken);
+		
+		counter.setIsWorking(0);
+		counterRepository.save(counter);
 		return token;
 	}
-	
-	public boolean makeTokenActive(int tokenId,int cId) {
-		Map<Integer, Deque<Token>> map = tokenqueue.getMap();
-		Deque<Token> queue=map.get(cId);
-		int requiredCounterId=cId;
-		if(queue==null || queue.size()==0) {
-			requiredCounterId=tokenrepository.findById(tokenId).get().getService().getCounter().getId();
+
+	public boolean addTokenToPending(int counterId) throws CounterServiceException{
+		if(counterRepository.findById(counterId).isEmpty()) {
+			throw new CounterServiceException("Counter Not Found");
 		}
-		for (Map.Entry<Integer, Deque<Token>> x : map.entrySet()) {
-			Queue<Token> q=x.getValue();
-			if(x.getKey()==requiredCounterId) {
-				Token token = tokenrepository.findById(tokenId).get();
-				if(token.getStatus() == Status.NOSHOW) {
-					token.setStatus(Status.ACTIVE);
-					token.setFrequencyOfCalling(token.getFrequencyOfCalling()+1);
-					tokenrepository.save(token);
-					tokenqueue.dequeue(cId, "pendingqueue");
-					return true;
-				}else if(token.getStatus()==Status.ACTIVE) {
-					return false;
-				}else if(token.getStatus()==Status.ABANDONED) {
-					return false;
-				}
-				token.setStatus(Status.ACTIVE);
-				token.setFrequencyOfCalling(token.getFrequencyOfCalling()+1);
-				tokenrepository.save(token);
-				tokenqueue.dequeue(requiredCounterId);
-			}
+		
+		Counter counter = counterRepository.findById(counterId).get();
+		
+		if(counter.getIsActive()==0) {
+			throw new CounterServiceException("Counter Not Active");
 		}
-		return true;
-	}
-	
-	public boolean addTokenToPending(int tokenId,int cId) {
-		Token token = tokenrepository.findById(tokenId).get();
-//		int cId = tokenrepository.findById(tokenId).get().getService().getCounter().getId();
-		if(token.getStatus()!=Status.ACTIVE) {
-			return false;
+		
+		if(counter.getIsWorking()==0) {
+			throw new CounterServiceException("Please call any token first");
 		}
-		if(token.getFrequencyOfCalling()>=3) {			
+		
+		if(globalQueueRepository.findById(counter.getIsWorking()).isEmpty()) {
+			throw new CounterServiceException("Token not found.");
+		}
+		
+		GlobalQueue globalToken = globalQueueRepository.findById(counter.getIsWorking()).get();
+		
+		if(globalToken.getStatus() != TempStatus.ACTIVE) {
+			throw new CounterServiceException("Token not active.");
+		}
+
+		counter.setIsWorking(0);
+		counterRepository.save(counter);
+		
+		if (globalToken.getFrequencyOfCalling() == 3) {
+			Token token = new Token();
+			token.setId(globalToken.getTokenId());
+			token.setGenerationTime(globalToken.getGenerationTime());
 			token.setStatus(Status.ABANDONED);
-			tokenrepository.save(token);
+			token.setServicetypeId(globalToken.getServicetypeId());
+			token.setTimesCalled(globalToken.getFrequencyOfCalling());
+			token.setCalledAtTime(globalToken.getCalledAtTime());
+			token.setServedBy(counter.getIsActive());
+			token.setServedAt(counterId);
+			tokenRepository.save(token);
+			globalQueueRepository.delete(globalToken);
 			return false;
-		}
-		token.setStatus(Status.NOSHOW);
-		tokenrepository.save(token);
-		tokenqueue.enqueue(token, cId, "noshow");
-		return true;
-	}
-	
-	public boolean serveToken(int tokenId) {
-		Token token = tokenrepository.findById(tokenId).get();
-		int cId = tokenrepository.findById(tokenId).get().getService().getCounter().getId();
-		if(token.getStatus()==Status.ACTIVE) {
-			token.setStatus(Status.SERVICED);
-			tokenrepository.save(token);
+		} else {
+			PendingQueue pendingtoken = new PendingQueue();
+			pendingtoken.setTokenId(globalToken.getTokenId());
+			pendingtoken.setServicetypeId(globalToken.getServicetypeId());
+			pendingQueueRepository.save(pendingtoken);
+
+			globalToken.setStatus(TempStatus.NOSHOW);
+			globalQueueRepository.save(globalToken);
 			return true;
 		}
-		return false;
 	}
 
-//	public void changestatus(int cid, String st) {
-//		Queue<Token> q = new LinkedList<>();
-//		Token token = new Token();
-//		token = tokenqueue.top(cid);
-//		if (st.equals("done")) {
-//			token.setStatus(Status.SERVICED);
-//			tokenqueue.dequeue(cid);
-//			tokenrepository.save(token);
-//			System.out.println("done");
-//		} else if (st.equals("noshow")) {
-//			if (token.getFrequencyOfCalling() >= 3) {
-//				token.setStatus(Status.ABANDONED);
-//				tokenrepository.save(token);
-//				tokenqueue.dequeue(cid);
-//				throw new TokenServiceException("excess of token call so it is abandoned");
-//			}
-//			token.setStatus(Status.NOSHOW);
-//			token.setFrequencyOfCalling(token.getFrequencyOfCalling() + 1);
-//			tokenqueue.enqueue(token, cid, st);
-//			tokenqueue.dequeue(cid);
-//		}
-//	}
-
-	public List<Counter> getcounter() {
-		return counterRepository.findAll();
+	public List<GlobalQueue> getGlobalQueue() {
+		// TODO Auto-generated method stub
+		return globalQueueRepository.findAll();
 	}
-	
-	public Counter getCounter(int counterId) {
-		Optional<Counter> counterData=counterRepository.findById(counterId);
-		if(counterData.isPresent()) {
-			return counterData.get();
-		}else {
-			throw new RuntimeException("Counter not found!");
+
+	public List<PendingQueue> getPendingQueue() {
+		// TODO Auto-generated method stub
+		return pendingQueueRepository.findAll();
+	}
+
+	public GlobalQueue getActiveToken(int counterId) {
+		if(counterRepository.findById(counterId).isEmpty()) {
+			throw new CounterServiceException("Counter Not Found");
 		}
-	}
-
-	public List<Service> getservices() {
-		return serviceRepository.findAll();
-	}
-
-	public List<Servicetype> getsubservicename(int sid) {
-		return servicetypeRepository.findByParentServiceId(sid);
-	}
-
-	public List<Servicetype> getallsubservicename() {
-		return servicetypeRepository.findAll();
+		
+		Counter counter = counterRepository.findById(counterId).get();
+		
+		if(counter.getIsActive()==0) {
+			throw new CounterServiceException("Counter Not Active");
+		}
+		
+		if(counter.getIsWorking()==0) {
+			throw new CounterServiceException("Please call any token first");
+		}
+		// TODO Auto-generated method stub
+		return globalQueueRepository.findById(counterRepository.findById(counterId).get().getIsWorking()).get();
 	}
 
 }

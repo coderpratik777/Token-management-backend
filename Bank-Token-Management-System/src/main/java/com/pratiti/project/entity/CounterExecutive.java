@@ -14,10 +14,15 @@ public class CounterExecutive  {
 
 	private String username;
 
-	//bi-directional one-to-one association to Counter
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="counter_id")
-	private Counter counter;
+	private boolean isLoggedIn;
+
+	public boolean isLoggedIn() {
+		return isLoggedIn;
+	}
+
+	public void setLoggedIn(boolean isLoggedIn) {
+		this.isLoggedIn = isLoggedIn;
+	}
 
 	public CounterExecutive() {
 	}
@@ -46,12 +51,5 @@ public class CounterExecutive  {
 		this.username = username;
 	}
 
-	public Counter getCounter() {
-		return this.counter;
-	}
-
-	public void setCounter(Counter counter) {
-		this.counter = counter;
-	}
 
 }

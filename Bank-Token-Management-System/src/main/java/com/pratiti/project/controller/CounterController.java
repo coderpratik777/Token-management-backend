@@ -12,12 +12,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pratiti.project.entity.Counter;
+import com.pratiti.project.entity.GlobalQueue;
+import com.pratiti.project.entity.PendingQueue;
 import com.pratiti.project.entity.Service;
 import com.pratiti.project.entity.Servicetype;
 import com.pratiti.project.entity.Token;
+import com.pratiti.project.exceptions.CounterServiceException;
 import com.pratiti.project.exceptions.TokenServiceException;
+import com.pratiti.project.model.CallNextStatus;
+import com.pratiti.project.model.ServeTokenStatus;
 import com.pratiti.project.model.Status;
-import com.pratiti.project.model.StatusData;
+import com.pratiti.project.repository.CounterRepository;
+import com.pratiti.project.repository.ServicetypeRepository;
 import com.pratiti.project.service.CounterService;
 
 
@@ -25,90 +31,84 @@ import com.pratiti.project.service.CounterService;
 @CrossOrigin
 public class CounterController {
 	
-	
 	@Autowired
 	private CounterService counterService;
 	
 	
-	@GetMapping("/gettokencounters")
-	public Queue<Token> getToken(@RequestParam int cid){
-		Queue<Token> tokens=counterService.gettoken(cid);
-		return tokens;
+	@GetMapping("/get-global-queue")
+	public List<GlobalQueue> getGlobalQueue(){
+		return counterService.getGlobalQueue();
 	}
 	
-	@GetMapping("/gettopservice")
-	public Token getTopService(@RequestParam int cid) {
-//		System.out.println("get top service called");
-		Token token=counterService.gettopservice(cid);
-		return token;	
+	@GetMapping("/get-pending-queue")
+	public List<PendingQueue> getPendingQueue(){
+		return counterService.getPendingQueue();
 	}
 	
-	@GetMapping("/make-token-active")
-	public boolean makeTokenActive(@RequestParam int tokenId,@RequestParam int cId) {
-		return counterService.makeTokenActive(tokenId,cId);
-		
+	@GetMapping("/get-active-token-of-counter")
+	public CallNextStatus getActiveToken(@RequestParam int counterId){
+		CallNextStatus status = new CallNextStatus();
+		try {
+			GlobalQueue globalQueue = counterService.getActiveToken(counterId);
+			status.setStatus(true);
+			status.setMesssageIfAny("Next Token Called.");
+			status.setGlobalQueue(globalQueue);
+		}catch(CounterServiceException e) {
+			status.setStatus(false);
+			status.setMesssageIfAny(e.getMessage());
+		}
+		return status;
+	}
+	
+	@GetMapping("/call-next")
+	public CallNextStatus callNext(@RequestParam int counterId) {
+		CallNextStatus status = new CallNextStatus();
+		try {
+			GlobalQueue globalQueue = counterService.callNext(counterId);
+			status.setStatus(true);
+			status.setMesssageIfAny("Next Token Called.");
+			status.setGlobalQueue(globalQueue);
+		}catch(CounterServiceException e) {
+			status.setStatus(false);
+			status.setMesssageIfAny(e.getMessage());
+		}
+		return status;
+	}
+	
+	@GetMapping("/serve-token")
+	public ServeTokenStatus serveToken(@RequestParam int counterId) {
+		ServeTokenStatus status = new ServeTokenStatus();
+		try {
+			Token token = counterService.serveToken(counterId);
+			status.setStatus(true);
+			status.setMesssageIfAny("Token Served.");
+			status.setToken(token);
+		}catch(CounterServiceException e) {
+			status.setStatus(false);
+			status.setMesssageIfAny(e.getMessage());
+		}
+		return status;
 	}
 	
 	@GetMapping("/addtoken-to-pending")
-	public boolean addTokenToPending(@RequestParam int tokenId,@RequestParam int cId) {
-		return counterService.addTokenToPending(tokenId,cId);
-	}
-	
-	@GetMapping("serve-token")
-	public boolean serveToken(@RequestParam int tokenId) {
-		return counterService.serveToken(tokenId);
-	}
-	
-//	@PostMapping("/changestatus")
-//	public Status changeStatus(@RequestBody StatusData statusdata){
-//		Status status=new Status();
-//		try {
-//			counterService.changestatus(statusdata.getCid(),statusdata.getSt());
-//			status.setMesssageIfAny("Successfully change status!");
-//			status.setStatus(true);
-//			}
-//		catch(TokenServiceException e) {
-//			status.setMesssageIfAny(e.getMessage());
-//			status.setStatus(false);
-//		}
-//		return status;
-//	}
-	
-	@GetMapping("/get-counter")
-	public List<Counter> getCounters()
-	{
-		 return counterService.getcounter();
-	}
-	
-	@GetMapping("/get-services")
-	public List<Service> getServices()
-	{
-		return counterService.getservices();
-		
-	}
-	@GetMapping("/get-sub-service")
-	public List<Servicetype> getSubServices(@RequestParam int sid)
-	{
-		return counterService.getsubservicename(sid);
-		
-	}
-	
-	@GetMapping("/get-all-sub-service")
-	public List<Servicetype> getAllSubservices()
-	{
-		return counterService.getallsubservicename();
-		
-	}
-	
-	@GetMapping("/get-counter-name")
-	public String getCounterName(@RequestParam("counterid") int counterId) {
+	public Status addTokenToPending(@RequestParam int counterId){
+		Status status = new Status();
 		try {
-			Counter counter=counterService.getCounter(counterId);
-			return counter.getName();
-		}catch(RuntimeException e) {
-			return e.getMessage();
+			if(counterService.addTokenToPending(counterId)) {
+				status.setStatus(true);
+				status.setMesssageIfAny("Token added to Pending.");
+			}else {
+				status.setStatus(false);
+				status.setMesssageIfAny("Token Abandoned.");
+			}
+			
+		}catch(CounterServiceException e) {
+			status.setStatus(false);
+			status.setMesssageIfAny(e.getMessage());
 		}
-		
+		return status;
 	}
+	
+
 			
 }
