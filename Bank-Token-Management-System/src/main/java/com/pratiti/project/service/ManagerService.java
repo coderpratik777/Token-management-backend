@@ -90,8 +90,15 @@ public class ManagerService {
 	}
 
 	// Reading all sub services
-	public List<Servicetype> getAllSubServices() {
-		return serviceTypeRepository.findAll();
+	public String[] getAllSubServices() {
+		String[] subServices = new String[serviceTypeRepository.findAll().size()];
+		List<Servicetype> subList= serviceTypeRepository.findAll();
+		int i=0;
+		for(Servicetype s:subList) {
+			subServices[i] = s.getServiceName();
+			i++;
+		}
+		return subServices;
 	}
 
 //////////////////////////Counter Executive CRUD////////////////////////////

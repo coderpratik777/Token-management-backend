@@ -72,7 +72,7 @@ public class ManagerController {
 	}
 	
 	@GetMapping("/get/allSubServices")
-	public List<Servicetype> getAllSubservices(){
+	public String[] getAllSubservices(){
 		return managerService.getAllSubServices();
 		
 	}
