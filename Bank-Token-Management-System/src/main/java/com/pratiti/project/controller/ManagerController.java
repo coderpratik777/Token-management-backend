@@ -45,7 +45,7 @@ public class ManagerController {
 		return status;
 	}
 //////////////////////////Services CRUD////////////////////////////
-	//Adding Service
+	//Adding Service and Service Type
 	@PostMapping("/add/service")
 	public AddServiceStatus addServiceAndItsType(@RequestBody ServiceAndTypes serviceAndTypes) {
 		AddServiceStatus status = new AddServiceStatus();
@@ -61,20 +61,69 @@ public class ManagerController {
 		return status;
 	}
 	
+	//Get services
 	@GetMapping("/get/services")
 	public List<Service> getAllServices(){
 		return managerService.getAllServices();
 		
 	}
 	@GetMapping("/get/subservices-of-service")
-	public List<Servicetype> getSubServices(@RequestParam int sid){
-		return managerService.getSubServiceFromService(sid);
+	public List<Servicetype> getSubServices(@RequestParam int sId){
+		return managerService.getSubServiceFromService(sId);
 	}
 	
 	@GetMapping("/get/allSubServices")
 	public String[] getAllSubservices(){
 		return managerService.getAllSubServices();
 		
+	}
+	
+	//Add sub service
+	@PutMapping("/add/subservice")
+	public Status addSubservice(@RequestParam String subService, @RequestParam int sId) {
+		Status status=new Status();
+		try {
+			managerService.addSubService(subService,sId);
+			status.setStatus(true);
+			status.setMesssageIfAny("Successfully added the Subservice!");
+		}
+		catch(Exception e) {
+			status.setStatus(false);
+			status.setMesssageIfAny(e.getMessage());
+		}
+		return status;
+	}
+	
+	//delete service
+	@PutMapping("/delete/service")
+	public Status deleteService(@RequestParam int sId) {
+		Status status=new Status();
+		try {
+			managerService.deleteService(sId);
+			status.setStatus(true);
+			status.setMesssageIfAny("Successfully delete the Service!");
+		}
+		catch(Exception e) {
+			status.setStatus(false);
+			status.setMesssageIfAny(e.getMessage());
+		}
+		return status;
+	}
+	
+	//delete subservice
+	@PutMapping("/delete/subservice")
+	public Status deleteSubService(@RequestParam String subService) {
+		Status status=new Status();
+		try {
+			managerService.deleteSubService(subService);
+			status.setStatus(true);
+			status.setMesssageIfAny("Successfully delete the Subservice!");
+		}
+		catch(Exception e) {
+			status.setStatus(false);
+			status.setMesssageIfAny(e.getMessage());
+		}
+		return status;
 	}
 	
 //////////////////////////Counter Executive CRUD////////////////////////////

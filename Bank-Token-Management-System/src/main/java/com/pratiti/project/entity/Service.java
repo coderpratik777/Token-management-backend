@@ -18,7 +18,7 @@ public class Service  {
 	private String serviceName;
 
 	//bidirectional many-to-one association to Servicetype
-	@OneToMany(mappedBy="parentService")
+	@OneToMany(mappedBy="parentService",cascade = { CascadeType.ALL })
 	private List<Servicetype> servicetypes;
 
 	public Service() {

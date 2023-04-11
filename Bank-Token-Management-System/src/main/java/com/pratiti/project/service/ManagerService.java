@@ -78,6 +78,26 @@ public class ManagerService {
 
 		return service;
 	}
+	
+	//Adding Subservice
+	public boolean addSubService(String subService, int sId) throws ManagerServiceException {
+		if(serviceRepository.findById(sId).isEmpty()) {
+			throw new ManagerServiceException("No such Service");
+		}
+		
+		if(serviceTypeRepository.findByServiceName(subService).isPresent()) {
+			throw new ManagerServiceException("Sub service Already present");
+		}
+		
+		Service service = serviceRepository.findById(sId).get();
+		
+		Servicetype serviceType = new Servicetype();
+		serviceType.setServiceName(subService);
+		serviceType.setParentService(service);
+		
+		serviceTypeRepository.save(serviceType);
+		return true;
+	}
 
 	// Reading services
 	public List<Service> getAllServices() {
@@ -85,8 +105,11 @@ public class ManagerService {
 	}
 
 	// Reading sub services from service
-	public List<Servicetype> getSubServiceFromService(int sid) {
-		return serviceTypeRepository.findByParentServiceId(sid);
+	public List<Servicetype> getSubServiceFromService(int sId) throws ManagerServiceException {
+		if(serviceRepository.findById(sId).isEmpty()) {
+			throw new ManagerServiceException("No such Service");
+		}
+		return serviceTypeRepository.findByParentServiceId(sId);
 	}
 
 	// Reading all sub services
@@ -100,6 +123,27 @@ public class ManagerService {
 		}
 		return subServices;
 	}
+	
+	//deleting Service
+	public boolean deleteService(int sId) {
+		if(serviceRepository.findById(sId).isEmpty()) {
+			throw new ManagerServiceException("Service is not present");
+		}
+		serviceRepository.deleteById(sId);
+		return true;
+		
+	}
+	
+	//deleting subService
+	public boolean deleteSubService(String subService) throws ManagerServiceException {
+		if(serviceTypeRepository.findByServiceName(subService).isEmpty()) {
+			throw new ManagerServiceException("Sub service is not present");
+		}
+		serviceTypeRepository.deleteById(serviceTypeRepository.findByServiceName(subService).get().getId());
+		return true;
+	}
+	
+	
 
 //////////////////////////Counter Executive CRUD////////////////////////////
 	// Adding the Counter Executive
@@ -147,11 +191,15 @@ public class ManagerService {
 	}
 
 	// Deleting counter
-	public void removeCounter(int id) {
+	public void removeCounter(int id) throws ManagerServiceException {
 		if (counterRepository.findById(id).isEmpty()) {
 			throw new ManagerServiceException("Counter does not exists !");
 		}
 		counterRepository.deleteById(id);
 	}
+
+	
+
+
 
 }

@@ -14,7 +14,7 @@ public class Servicetype {
 	@Column(name = "service_name")
 	private String serviceName;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JsonIgnore
 	private Service parentService;
 
