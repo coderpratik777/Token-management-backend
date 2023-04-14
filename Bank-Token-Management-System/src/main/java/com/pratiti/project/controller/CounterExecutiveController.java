@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pratiti.project.exceptions.CounterServiceException;
 import com.pratiti.project.model.CounterExecutiveLoginData;
-import com.pratiti.project.model.LoginData;
 import com.pratiti.project.model.LoginStatus;
 import com.pratiti.project.model.Status;
 import com.pratiti.project.service.CounterExecutiveService;

@@ -1,34 +1,24 @@
 package com.pratiti.project.service;
 
-import java.sql.Time;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pratiti.project.entity.Counter;
+import com.pratiti.project.entity.CounterExecutive;
 import com.pratiti.project.entity.GlobalQueue;
 import com.pratiti.project.entity.GlobalQueue.TempStatus;
-import com.pratiti.project.entity.Service;
-import com.pratiti.project.entity.Servicetype;
-import com.pratiti.project.entity.Token;
-import com.pratiti.project.entity.Token.Status;
 import com.pratiti.project.exceptions.TokenServiceException;
-import com.pratiti.project.model.TokenGenerationData;
-import com.pratiti.project.queuemanager.TokenQueueManager;
+import com.pratiti.project.model.Stats;
+import com.pratiti.project.repository.CounterExecutiveRepository;
 import com.pratiti.project.repository.CounterRepository;
 import com.pratiti.project.repository.GlobalQueueRepository;
 import com.pratiti.project.repository.ServiceRepository;
 import com.pratiti.project.repository.ServicetypeRepository;
 import com.pratiti.project.repository.TokenRepository;
 
-import net.bytebuddy.agent.builder.AgentBuilder.CircularityLock.Global;
 
 @org.springframework.stereotype.Service
 public class TokenService {
@@ -49,6 +39,9 @@ public class TokenService {
 
 	@Autowired
 	CounterRepository counterRepository;
+	
+	@Autowired
+	CounterExecutiveRepository counterExecutiveRepository;
 
 	@Autowired
 	GlobalQueueRepository globalQueueRepository;
@@ -59,14 +52,14 @@ public class TokenService {
 		}
 		GlobalQueue token = new GlobalQueue();
 
-		LocalTime currTime = LocalTime.now();
+		LocalDateTime currTime = LocalDateTime.now();
 		token.setServicetypeId(i);
-		token.setGenerationTime(Time.valueOf(currTime));
+		token.setGenerationTime(currTime);
 		token.setStatus(TempStatus.PENDING);
 
-		LocalTime expectedTime = currTime
+		LocalDateTime expectedTime = currTime
 				.plusMinutes((globalQueueRepository.findAll().size() / counterRepository.findAll().size()) * 5);
-		token.setExpectedTime(Time.valueOf(expectedTime));
+		token.setExpectedTime(expectedTime);
 
 		token.setFrequencyOfCalling(0);
 		globalQueueRepository.save(token);
@@ -78,6 +71,43 @@ public class TokenService {
 			throw new TokenServiceException("No such token");
 		}
 		return globalQueueRepository.findById(id).get();
+	}
+
+	public List<Stats> getCounterStats() {
+		List<Stats> statsList = new ArrayList<>();
+		for(Counter c:counterRepository.findAll()) {
+			Stats counterStats = new Stats();
+			counterStats.setId(c.getId());
+			counterStats.setName(c.getCounterName());
+			counterStats.setTokensServed(tokenRepository.findServicedByCounter(c.getId()));
+			counterStats.setTokenAbandoned(tokenRepository.findAbandonedByCounter(c.getId()));
+			if(tokenRepository.findAverageServeTime(c.getId()).isPresent()) {				
+				counterStats.setAverageServeTime(tokenRepository.findAverageServeTime(c.getId()).get());
+			}else {
+				counterStats.setAverageServeTime(0);
+			}
+			statsList.add(counterStats);
+		}
+		return statsList;
+	}
+
+	public List<Stats> getCounterExecStats() {
+		// TODO Auto-generated method stub
+		List<Stats> statsList = new ArrayList<>();
+		for(CounterExecutive c:counterExecutiveRepository.findAll()) {
+			Stats counterExecStats = new Stats();
+			counterExecStats.setId(c.getId());
+			counterExecStats.setName(c.getUsername());
+			counterExecStats.setTokensServed(tokenRepository.findServicedByCounterExec(c.getId()));
+			counterExecStats.setTokenAbandoned(tokenRepository.findAbandonedByCounterExec(c.getId()));
+			if(tokenRepository.findAverageServeTimeOfExec(c.getId()).isPresent()) {				
+				counterExecStats.setAverageServeTime(tokenRepository.findAverageServeTimeOfExec(c.getId()).get());
+			}else {
+				counterExecStats.setAverageServeTime(0);
+			}
+			statsList.add(counterExecStats);
+		}
+		return statsList;
 	}
 
 }

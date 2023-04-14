@@ -2,18 +2,14 @@ package com.pratiti.project.entity;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.sql.Time;
-import java.time.LocalTime;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 public class Token  {
 	@Id
 	private int id;
 
-	private Time generationTime;
+	private LocalDateTime generationTime;
 	
 	@Enumerated(EnumType.STRING)
 	private Status status;
@@ -26,7 +22,7 @@ public class Token  {
 
 	private int timesCalled;
 	
-	private LocalTime calledAtTime;
+	private LocalDateTime calledAtTime;
 
 	private int servedBy;
 	
@@ -42,11 +38,11 @@ public class Token  {
 		this.id = id;
 	}
 
-	public Time getGenerationTime() {
+	public LocalDateTime getGenerationTime() {
 		return generationTime;
 	}
 
-	public void setGenerationTime(Time generationTime) {
+	public void setGenerationTime(LocalDateTime generationTime) {
 		this.generationTime = generationTime;
 	}
 
@@ -74,11 +70,11 @@ public class Token  {
 		this.timesCalled = timesCalled;
 	}
 
-	public LocalTime getCalledAtTime() {
+	public LocalDateTime getCalledAtTime() {
 		return calledAtTime;
 	}
 
-	public void setCalledAtTime(LocalTime calledAtTime) {
+	public void setCalledAtTime(LocalDateTime calledAtTime) {
 		this.calledAtTime = calledAtTime;
 	}
 
@@ -105,6 +101,5 @@ public class Token  {
 	public void setServeTime(int serveTime) {
 		this.serveTime = serveTime;
 	}
-	
 	
 }

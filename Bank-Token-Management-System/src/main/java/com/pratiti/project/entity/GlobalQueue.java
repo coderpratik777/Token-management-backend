@@ -1,7 +1,6 @@
 package com.pratiti.project.entity;
 
-import java.sql.Time;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -19,7 +18,7 @@ public class GlobalQueue{
 	
 	private int servicetypeId;
 
-	private Time generationTime;
+	private LocalDateTime generationTime;
 
 	@Enumerated(EnumType.STRING)
 	private TempStatus status;
@@ -28,11 +27,11 @@ public class GlobalQueue{
 		ACTIVE,PENDING,NOSHOW;
 	}
 	
-	private Time expectedTime;
+	private LocalDateTime expectedTime;
 	
 	private int frequencyOfCalling;
 	
-	private LocalTime calledAtTime;
+	private LocalDateTime calledAtTime;
 	
 	private int servedTime;
 
@@ -52,11 +51,11 @@ public class GlobalQueue{
 		this.servicetypeId = servicetypeId;
 	}
 
-	public Time getGenerationTime() {
+	public LocalDateTime getGenerationTime() {
 		return generationTime;
 	}
 
-	public void setGenerationTime(Time generationTime) {
+	public void setGenerationTime(LocalDateTime generationTime) {
 		this.generationTime = generationTime;
 	}
 
@@ -76,11 +75,11 @@ public class GlobalQueue{
 		this.frequencyOfCalling = frequencyOfCalling;
 	}
 
-	public LocalTime getCalledAtTime() {
+	public LocalDateTime getCalledAtTime() {
 		return calledAtTime;
 	}
 
-	public void setCalledAtTime(LocalTime calledAtTime) {
+	public void setCalledAtTime(LocalDateTime calledAtTime) {
 		this.calledAtTime = calledAtTime;
 	}
 
@@ -92,11 +91,11 @@ public class GlobalQueue{
 		this.servedTime = servedTime;
 	}
 
-	public Time getExpectedTime() {
+	public LocalDateTime getExpectedTime() {
 		return expectedTime;
 	}
 
-	public void setExpectedTime(Time expectedTime) {
+	public void setExpectedTime(LocalDateTime expectedTime) {
 		this.expectedTime = expectedTime;
 	}
 	

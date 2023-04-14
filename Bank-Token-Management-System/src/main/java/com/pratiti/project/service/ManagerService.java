@@ -12,7 +12,6 @@ import com.pratiti.project.entity.CounterExecutive;
 import com.pratiti.project.entity.Manager;
 import com.pratiti.project.entity.Service;
 import com.pratiti.project.entity.Servicetype;
-import com.pratiti.project.exceptions.CounterServiceException;
 import com.pratiti.project.exceptions.ManagerServiceException;
 import com.pratiti.project.model.LoginData;
 import com.pratiti.project.repository.CounterExecutiveRepository;

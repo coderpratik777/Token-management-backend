@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Queue;
 
 import com.pratiti.project.entity.Token;
-import com.pratiti.project.entity.Token.Status;
 
 public class TokenQueueManager {
 	private static TokenQueueManager instance = null;

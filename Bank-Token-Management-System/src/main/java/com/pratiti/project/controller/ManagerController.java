@@ -1,11 +1,9 @@
 package com.pratiti.project.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.pratiti.project.model.ServiceAndTypes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import com.pratiti.project.entity.Counter;
@@ -13,13 +11,11 @@ import com.pratiti.project.entity.CounterExecutive;
 import com.pratiti.project.entity.Manager;
 import com.pratiti.project.entity.Service;
 import com.pratiti.project.entity.Servicetype;
-import com.pratiti.project.exceptions.CounterServiceException;
 import com.pratiti.project.exceptions.ManagerServiceException;
 import com.pratiti.project.model.AddServiceStatus;
 import com.pratiti.project.model.LoginData;
 import com.pratiti.project.model.LoginStatus;
 import com.pratiti.project.model.Status;
-import com.pratiti.project.service.CounterService;
 import com.pratiti.project.service.ManagerService;
 
 @RestController

@@ -1,8 +1,5 @@
 package com.pratiti.project.model;
 
-import java.util.List;
-
-
 public class TokenGenerationData {
 	
 	

@@ -1,32 +1,22 @@
 package com.pratiti.project.service;
 
-import java.sql.Time;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pratiti.project.entity.Counter;
 import com.pratiti.project.entity.GlobalQueue;
-import com.pratiti.project.entity.Service;
-import com.pratiti.project.entity.Servicetype;
 import com.pratiti.project.entity.Token;
 import com.pratiti.project.entity.GlobalQueue.TempStatus;
 import com.pratiti.project.entity.PendingQueue;
 import com.pratiti.project.entity.Token.Status;
 import com.pratiti.project.exceptions.CounterServiceException;
-import com.pratiti.project.queuemanager.TokenQueueManager;
 import com.pratiti.project.repository.CounterRepository;
 import com.pratiti.project.repository.GlobalQueueRepository;
 import com.pratiti.project.repository.PendingQueueRepository;
-import com.pratiti.project.repository.ServiceRepository;
-import com.pratiti.project.repository.ServicetypeRepository;
 import com.pratiti.project.repository.TokenRepository;
 
 @org.springframework.stereotype.Service
@@ -77,7 +67,7 @@ public class CounterService {
 				globalToken = globalQueueRepository.findFirst();
 			}
 		}
-		LocalTime currTime = LocalTime.now();
+		LocalDateTime currTime = LocalDateTime.now();
 		globalToken.setCalledAtTime(currTime);
 		globalToken.setFrequencyOfCalling(globalToken.getFrequencyOfCalling() + 1);
 		globalToken.setStatus(TempStatus.ACTIVE);
@@ -127,7 +117,7 @@ public class CounterService {
 		token.setServedBy(counter.getIsActive());
 		token.setServedAt(counterId);
 
-		LocalTime currTime = LocalTime.now();
+		LocalDateTime currTime = LocalDateTime.now();
 
 		token.setServeTime((int) Duration.between(globalToken.getCalledAtTime(), currTime).toMinutes());
 		tokenRepository.save(token);

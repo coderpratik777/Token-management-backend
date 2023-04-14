@@ -2,7 +2,6 @@ package com.pratiti.project.entity;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 
