@@ -110,4 +110,9 @@ public class TokenService {
 		return statsList;
 	}
 
+	public List<Object> getDateWiseStats() {
+		// TODO Auto-generated method stub
+		return tokenRepository.getDatewiseData();
+	}
+
 }

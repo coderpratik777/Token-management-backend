@@ -8,7 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQuery(name = "Servicetype.findAll", query = "SELECT s FROM Servicetype s")
 public class Servicetype {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name = "serviceType_sequence_generator", sequenceName = "serviceType_sequence", allocationSize = 100)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "serviceType_sequence_generator")
 	private int id;
 
 	@Column(name = "service_name")

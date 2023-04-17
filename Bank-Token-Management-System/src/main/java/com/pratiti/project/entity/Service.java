@@ -10,7 +10,8 @@ import java.util.List;
 @NamedQuery(name="Service.findAll", query="SELECT s FROM Service s")
 public class Service  {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@SequenceGenerator(name = "service_sequence_generator", sequenceName = "service_sequence", allocationSize = 100)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "serviceType_sequence_generator")
 	private int id;
 
 	@Column(name="service_name")

@@ -67,5 +67,10 @@ public class TokenController {
 	public List<Stats> getCounterExecStats() {
 		return tokenService.getCounterExecStats();
 	}
+	
+	@GetMapping("/get/stats/date-wise")
+	public List<Object> getDateWiseStats() {
+		return tokenService.getDateWiseStats();
+	}
 
 }
